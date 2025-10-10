@@ -12,6 +12,12 @@ import {
 import { useTheme } from 'next-themes';
 import { SunIcon, MoonIcon, SunMoon } from 'lucide-react';
 
+const themes = [
+  { value: 'system', label: 'System', icon: <SunMoon /> },
+  { value: 'dark', label: 'Dark', icon: <MoonIcon /> },
+  { value: 'light', label: 'Light', icon: <SunIcon /> },
+];
+
 const ModeToggle = () => {
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
@@ -22,43 +28,33 @@ const ModeToggle = () => {
 
   if (!mounted) return null;
 
+  const currentTheme = themes.find((t) => t.value === theme)?.icon || (
+    <SunMoon />
+  );
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          className="cursor-pointer focus-visible:ring-0 focus-visible:ring-offset-0"
+          aria-label="Toggle theme"
+          className="focus-visible:ring-primary cursor-pointer focus-visible:ring-1 focus-visible:ring-offset-0"
         >
-          {theme === 'system' ? (
-            <SunMoon />
-          ) : theme === 'dark' ? (
-            <MoonIcon />
-          ) : (
-            <SunIcon />
-          )}
+          {currentTheme}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuLabel>Appearance</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuCheckboxItem
-          checked={theme === 'system'}
-          onClick={() => setTheme('system')}
-        >
-          System
-        </DropdownMenuCheckboxItem>
-        <DropdownMenuCheckboxItem
-          checked={theme === 'dark'}
-          onClick={() => setTheme('dark')}
-        >
-          Dark
-        </DropdownMenuCheckboxItem>
-        <DropdownMenuCheckboxItem
-          checked={theme === 'light'}
-          onClick={() => setTheme('light')}
-        >
-          Light
-        </DropdownMenuCheckboxItem>
+        {themes.map(({ value, label }) => (
+          <DropdownMenuCheckboxItem
+            key={value}
+            checked={value === theme}
+            onSelect={() => setTheme(value)}
+          >
+            {label}
+          </DropdownMenuCheckboxItem>
+        ))}
       </DropdownMenuContent>
     </DropdownMenu>
   );
