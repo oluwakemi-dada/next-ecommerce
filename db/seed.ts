@@ -1,4 +1,4 @@
-import { PrismaClient } from '../lib/generated/prisma';
+import { PrismaClient } from '@prisma/client';
 import sampleData from './sample-data';
 
 const main = async () => {
