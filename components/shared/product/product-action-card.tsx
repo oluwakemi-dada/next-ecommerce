@@ -29,11 +29,14 @@ const ProductActionCard = ({ product }: ProductActionCardProps) => {
             )}
           </div>
 
-          {product.stock > 0 && (
-            <div className="flex-center">
-              <Button className="w-full cursor-pointer">Add To Cart</Button>
-            </div>
-          )}
+          <div className="flex-center pt-5">
+            <Button
+              disabled={product.stock < 1}
+              className="w-full cursor-pointer"
+            >
+              Add To Cart
+            </Button>
+          </div>
         </CardContent>
       </Card>
     </div>
