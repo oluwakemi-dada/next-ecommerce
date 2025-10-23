@@ -1,13 +1,20 @@
 'use client';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { signInDefaultValues } from '@/lib/constants';
 import Link from 'next/link';
+import { useActionState } from 'react';
+import SubmitButton from '@/components/shared/submit-button';
+import { signInWithCredentials } from '@/lib/actions/user.actions';
 
 const CredentialsSignInForm = () => {
+  const [data, action] = useActionState(signInWithCredentials, {
+    success: false,
+    message: '',
+  });
+
   return (
-    <form>
+    <form action={action}>
       <div className="space-y-6">
         <div className="space-y-1.5">
           <Label htmlFor="email">Email</Label>
@@ -32,10 +39,13 @@ const CredentialsSignInForm = () => {
           />
         </div>
         <div>
-          <Button className="w-full" variant="default">
-            Sign In
-          </Button>
+          <SubmitButton pendingLabel="Signing In...">Sign In</SubmitButton>
         </div>
+
+        {data && !data.success && (
+          <div className="text-destructive text-center">{data.message}</div>
+        )}
+
         <div className="text-muted-foreground text-center text-sm">
           Don&apos;t have an account?{' '}
           <Link href="/sign-up" target="_self" className="link">
