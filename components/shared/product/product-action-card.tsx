@@ -1,8 +1,8 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import ProductPrice from './product-price';
 import { Product } from '@/types';
+import ProductPrice from './product-price';
 
 type ProductActionCardProps = {
   product: Product;

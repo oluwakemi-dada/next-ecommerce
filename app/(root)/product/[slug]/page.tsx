@@ -1,8 +1,8 @@
-import { getProductBySlug } from '@/lib/actions/product.actions';
 import { notFound } from 'next/navigation';
 import ProductActionCard from '@/components/shared/product/product-action-card';
 import ProductInfo from '@/components/shared/product/product-info';
 import ProductImages from '@/components/shared/product/product-images';
+import { getProductBySlug } from '@/lib/actions/product.actions';
 
 type ProductDetailsPageProps = {
   params: Promise<{ slug: string }>;

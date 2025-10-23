@@ -1,7 +1,7 @@
 'use client';
+import { ReactNode } from 'react';
 import { useFormStatus } from 'react-dom';
 import { Button } from '../ui/button';
-import { ReactNode } from 'react';
 
 type SubmitButton = {
   children: ReactNode;

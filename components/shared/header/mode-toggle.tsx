@@ -1,5 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { SunIcon, MoonIcon, SunMoon } from 'lucide-react';
+import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenuTrigger,
@@ -9,8 +11,6 @@ import {
   DropdownMenuContent,
   DropdownMenuCheckboxItem,
 } from '@/components/ui/dropdown-menu';
-import { useTheme } from 'next-themes';
-import { SunIcon, MoonIcon, SunMoon } from 'lucide-react';
 
 const themes = [
   { value: 'system', label: 'System', icon: <SunMoon /> },
