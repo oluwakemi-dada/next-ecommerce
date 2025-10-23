@@ -1,7 +1,8 @@
-import { ShoppingCart, UserIcon } from 'lucide-react';
+import { ShoppingCart } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import ModeToggle from './mode-toggle';
+import UserButton from './user-button';
 
 const MenuItems = () => {
   return (
@@ -12,11 +13,7 @@ const MenuItems = () => {
           <ShoppingCart /> Cart
         </Link>
       </Button>
-      <Button asChild>
-        <Link href="/sign-in">
-          <UserIcon /> Sign In
-        </Link>
-      </Button>
+      <UserButton />
     </>
   );
 };
