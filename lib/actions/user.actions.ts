@@ -19,6 +19,7 @@ export const signInWithCredentials = async (
     return {
       success: true,
       message: 'Signed in successfully',
+      email: ''
     };
   } catch (error) {
     if (isRedirectError(error)) {
@@ -28,6 +29,7 @@ export const signInWithCredentials = async (
     return {
       success: false,
       message: 'Invalid email or password',
+      email: formData.get('email') as string ?? '',
     };
   }
 };

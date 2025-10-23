@@ -12,6 +12,7 @@ const CredentialsSignInForm = () => {
   const [data, action] = useActionState(signInWithCredentials, {
     success: false,
     message: '',
+    email: '',
   });
 
   const searchParams = useSearchParams();
@@ -29,7 +30,7 @@ const CredentialsSignInForm = () => {
             type="email"
             required
             autoComplete="email"
-            defaultValue={signInDefaultValues.email}
+            defaultValue={data.email || signInDefaultValues.email}
           />
         </div>
         <div className="space-y-1.5">
