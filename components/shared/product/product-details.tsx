@@ -10,6 +10,7 @@ type ProductDetailsProps = {
 
 const ProductDetails = async ({ slug }: ProductDetailsProps) => {
   const product = await getProductBySlug(slug);
+  
   if (!product) notFound();
 
   return (

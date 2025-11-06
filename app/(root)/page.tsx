@@ -1,12 +1,13 @@
+import Loader from '@/components/shared/loader';
 import ProductList from '@/components/shared/product/product-list';
-import { getLatestProducts } from '@/lib/actions/product.actions';
+import { Suspense } from 'react';
 
-const HomePage = async () => {
-  const latestProducts = await getLatestProducts();
-
+const HomePage = () => {
   return (
     <>
-      <ProductList data={latestProducts} title="Newest Arrivals" limit={4} />
+      <Suspense fallback={<Loader />}>
+        <ProductList title="Newest Arrivals" limit={4} />
+      </Suspense>
     </>
   );
 };
