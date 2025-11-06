@@ -1,12 +1,11 @@
 import { cn } from '@/lib/utils';
 
-const ProductPrice = ({
-  value,
-  className,
-}: {
+type ProductPriceProps = {
   value: number;
   className?: string;
-}) => {
+};
+
+const ProductPrice = ({ value, className }: ProductPriceProps) => {
   // Ensure two decimal places and get the int/float
   const stringValue = value.toFixed(2);
   const [intValue, floatValue] = stringValue.split('.');
