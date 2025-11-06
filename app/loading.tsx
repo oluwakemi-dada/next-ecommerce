@@ -1,19 +1,7 @@
-import { BeatLoader } from 'react-spinners';
+import Loader from '@/components/shared/loader';
 
 const LoadingPage = () => {
-  return (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-        width: '100vw',
-      }}
-    >
-      <BeatLoader color="currentColor" />
-    </div>
-  );
+  return <Loader fullScreen />;
 };
 
 export default LoadingPage;

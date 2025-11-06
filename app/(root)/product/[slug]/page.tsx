@@ -1,8 +1,6 @@
-import { notFound } from 'next/navigation';
-import ProductActionCard from '@/components/shared/product/product-action-card';
-import ProductInfo from '@/components/shared/product/product-info';
-import ProductImages from '@/components/shared/product/product-images';
-import { getProductBySlug } from '@/lib/actions/product.actions';
+import { Suspense } from 'react';
+import ProductDetails from '@/components/shared/product/product-details';
+import Loader from '@/components/shared/loader';
 
 type ProductDetailsPageProps = {
   params: Promise<{ slug: string }>;
@@ -11,23 +9,12 @@ type ProductDetailsPageProps = {
 const ProductDetailsPage = async ({ params }: ProductDetailsPageProps) => {
   const { slug } = await params;
 
-  const product = await getProductBySlug(slug);
-  if (!product) notFound();
-
   return (
     <>
       <section>
-        <div className="grid grid-cols-1 md:grid-cols-5">
-          <div className="col-span-2">
-            <ProductImages images={product.images} />
-          </div>
-
-          <div className="col-span-2 p-5">
-            <ProductInfo product={product} />
-          </div>
-
-          <ProductActionCard product={product} />
-        </div>
+        <Suspense fallback={<Loader />}>
+          <ProductDetails slug={slug} />
+        </Suspense>
       </section>
     </>
   );
