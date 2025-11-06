@@ -1,8 +1,8 @@
+import { notFound } from 'next/navigation';
 import { getProductBySlug } from '@/lib/actions/product.actions';
 import ProductActionCard from './product-action-card';
 import ProductImages from './product-images';
 import ProductInfo from './product-info';
-import { notFound } from 'next/navigation';
 
 type ProductDetailsProps = {
   slug: string;

@@ -1,6 +1,6 @@
+import { getLatestProducts } from '@/lib/actions/product.actions';
 import { Product } from '@/types';
 import ProductCard from './product-card';
-import { getLatestProducts } from '@/lib/actions/product.actions';
 
 type ProductListProps = {
   title?: string;
