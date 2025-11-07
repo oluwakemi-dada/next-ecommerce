@@ -1,6 +1,7 @@
+'use client';
 import { UserIcon } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { auth } from '@/auth';
 import { signOutUser } from '@/lib/actions/user.actions';
 import { Button } from '@/components/ui/button';
 import {
@@ -10,8 +11,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-const UserButton = async () => {
-  const session = await auth();
+const UserButton = () => {
+  const { data: session } = useSession();
 
   if (!session) {
     return (
