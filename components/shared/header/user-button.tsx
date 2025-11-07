@@ -12,8 +12,10 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 const UserButton = () => {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [loading, setLoading] = useState(false);
+
+  if (status === 'loading') return null;
 
   if (!session) {
     return (
