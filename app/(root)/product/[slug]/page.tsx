@@ -10,13 +10,6 @@ type ProductDetailsPageProps = {
 // Cache for 1 hour
 export const revalidate = 3600;
 
-// Tag for instant revalidation
-export const generateTags = async ({ params }: ProductDetailsPageProps) => {
-  const { slug } = await params;
-
-  return [`product-${slug}`];
-};
-
 // For builds
 export const generateStaticParams = async () => {
   const products = await getAllProducts();
