@@ -23,6 +23,7 @@ const Header = () => {
         </div>
         
         <Menu />
+        
       </div>
     </header>
   );

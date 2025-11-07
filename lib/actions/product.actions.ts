@@ -21,3 +21,13 @@ export const getProductBySlug = async (slug: string) => {
     },
   });
 };
+// Get all products
+export const getAllProducts = async () => {
+  const data = await prisma.product.findMany({
+    orderBy: { createdAt: 'desc' },
+  });
+
+  return {
+    data,
+  };
+};
