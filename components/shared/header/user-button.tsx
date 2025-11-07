@@ -1,8 +1,8 @@
 'use client';
+import { useState } from 'react';
 import { UserIcon } from 'lucide-react';
-import { useSession } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { signOutUser } from '@/lib/actions/user.actions';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -13,6 +13,7 @@ import {
 
 const UserButton = () => {
   const { data: session } = useSession();
+  const [loading, setLoading] = useState(false);
 
   if (!session) {
     return (
@@ -25,6 +26,15 @@ const UserButton = () => {
   }
 
   const firstInitial = session.user?.name?.charAt(0).toUpperCase() ?? 'U';
+
+  const handleSignOut = async () => {
+    setLoading(true);
+    try {
+      await signOut({ redirect: false });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="flex items-center gap-2">
@@ -51,15 +61,17 @@ const UserButton = () => {
             </div>
           </DropdownMenuLabel>
 
-          <form action={signOutUser} className="w-full">
+          <div className="w-full">
             <Button
               type="submit"
               className="h-4 w-full cursor-pointer justify-start px-2 py-4"
               variant="ghost"
+              onClick={handleSignOut}
+              disabled={loading}
             >
               Sign Out
             </Button>
-          </form>
+          </div>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

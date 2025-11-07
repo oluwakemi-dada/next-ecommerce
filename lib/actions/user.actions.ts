@@ -2,7 +2,7 @@
 import { ZodError } from 'zod';
 import { hashSync } from 'bcrypt-ts-edge';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
-import { signIn, signOut } from '@/auth';
+import { signIn } from '@/auth';
 import { prisma } from '@/db/prisma';
 import { signInFormSchema, signUpFormSchema } from '../validators';
 import { formatError } from '../utils';
@@ -44,11 +44,6 @@ export const signInWithCredentials = async (
       email: (formData.get('email') as string) ?? '',
     };
   }
-};
-
-// Sign user out
-export const signOutUser = async () => {
-  await signOut();
 };
 
 // Sign up user
