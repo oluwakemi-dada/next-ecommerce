@@ -14,8 +14,8 @@ const AddToCart = ({ item, outOfStock }: AddToCartProps) => {
   const handleAddToCart = async () => {
     const res = await addItemToCart(item);
 
-    if (!res.success) {
-      toast.error(res.message);
+    if (!res?.success) {
+      toast.error(res?.message);
       return;
     }
 
