@@ -1,6 +1,7 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import AddToCart from '@/components/shared/product/add-to-cart';
 import { Product } from '@/types';
 import ProductPrice from './product-price';
 
@@ -11,7 +12,7 @@ type ProductActionCardProps = {
 const ProductActionCard = ({ product }: ProductActionCardProps) => {
   return (
     <div>
-      <Card>
+      <Card className="py-1">
         <CardContent className="p-4">
           <div className="mb-2 flex justify-between">
             <div>Price</div>
@@ -30,12 +31,17 @@ const ProductActionCard = ({ product }: ProductActionCardProps) => {
           </div>
 
           <div className="flex-center pt-5">
-            <Button
-              disabled={product.stock < 1}
-              className="w-full cursor-pointer"
-            >
-              Add To Cart
-            </Button>
+            <AddToCart
+              item={{
+                name: product.name,
+                slug: product.slug,
+                price: product.price,
+                image: product.images[0],
+                productId: product.id,
+                qty: 1,
+              }}
+              outOfStock={product.stock < 1}
+            />
           </div>
         </CardContent>
       </Card>
