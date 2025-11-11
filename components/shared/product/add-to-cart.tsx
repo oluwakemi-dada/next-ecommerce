@@ -66,7 +66,7 @@ const AddToCart = ({ cart, item, outOfStock }: AddToCartProps) => {
     );
 
   return existItem ? (
-    <div>
+    <div className="flex items-center gap-2">
       <Button
         type="button"
         variant="outline"
@@ -89,10 +89,7 @@ const AddToCart = ({ cart, item, outOfStock }: AddToCartProps) => {
         onClick={handleAddToCart}
         disabled={isPending}
       >
-        <IconOrLoader
-          pending={isPending && actionType === 'add'}
-          Icon={Plus}
-        />
+        <IconOrLoader pending={isPending && actionType === 'add'} Icon={Plus} />
       </Button>
     </div>
   ) : (
