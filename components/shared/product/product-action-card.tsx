@@ -1,7 +1,7 @@
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import AddToCart from '@/components/shared/product/add-to-cart';
+import { getMyCart } from '@/lib/actions/cart.actions';
 import { Product } from '@/types';
 import ProductPrice from './product-price';
 
@@ -9,7 +9,13 @@ type ProductActionCardProps = {
   product: Product;
 };
 
-const ProductActionCard = ({ product }: ProductActionCardProps) => {
+const ProductActionCard = async ({ product }: ProductActionCardProps) => {
+  const cart = await getMyCart();
+
+  const normalizedCart = cart
+    ? { ...cart, userId: cart.userId ?? undefined }
+    : undefined;
+
   return (
     <div>
       <Card className="py-1">
@@ -32,6 +38,7 @@ const ProductActionCard = ({ product }: ProductActionCardProps) => {
 
           <div className="flex-center pt-5">
             <AddToCart
+              cart={normalizedCart}
               item={{
                 name: product.name,
                 slug: product.slug,
