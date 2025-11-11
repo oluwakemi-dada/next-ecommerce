@@ -15,12 +15,12 @@ const AddToCart = ({ item, outOfStock }: AddToCartProps) => {
     const res = await addItemToCart(item);
 
     if (!res?.success) {
-      toast.error(res?.message);
+      toast.error(res.message);
       return;
     }
 
     // Handle success add to cart
-    toast.success(`${item.name} added to cart`, {
+    toast.success(res.message, {
       action: (
         <Button
           className="bg-primary altText='Go To Cart cursor-pointer text-white hover:bg-gray-800"
