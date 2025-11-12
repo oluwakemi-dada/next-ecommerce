@@ -1,9 +1,9 @@
 import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
-import { ArrowRight, Minus, Plus } from 'lucide-react';
+import { Minus, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { TableRow, TableCell } from '@/components/ui/table';
-import IconOrLoader from '@/components/shared/icon-or-loader';
+import LoadingIcon from '@/components/shared/icon-or-loader';
 import Image from 'next/image';
 import { addItemToCart, removeItemFromCart } from '@/lib/actions/cart.actions';
 import { Button } from '@/components/ui/button';
@@ -42,7 +42,7 @@ const CartTableRow = ({ item }: CartTableRowProps) => {
           }}
           aria-disabled={isPending}
         >
-          <IconOrLoader
+          <LoadingIcon
             pending={isPending && actionType === 'remove'}
             Icon={Minus}
           />
@@ -64,7 +64,7 @@ const CartTableRow = ({ item }: CartTableRowProps) => {
           }}
           aria-disabled={isPending}
         >
-          <IconOrLoader
+          <LoadingIcon
             pending={isPending && actionType === 'add'}
             Icon={Plus}
             key="plus"

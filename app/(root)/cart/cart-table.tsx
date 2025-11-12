@@ -1,4 +1,5 @@
 'use client';
+import { useTransition } from 'react';
 import {
   Table,
   TableBody,
@@ -8,8 +9,13 @@ import {
 } from '@/components/ui/table';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Card, CardContent } from '@/components/ui/card';
+import { formatCurrency } from '@/lib/utils';
 import { Cart } from '@/types';
 import CartTableRow from './cart-table-row';
+import { Button } from '@/components/ui/button';
+import LoadingIcon from '@/components/shared/icon-or-loader';
+import { ArrowRight } from 'lucide-react';
 
 type CartTableProps = {
   cart?: Cart;
@@ -17,6 +23,7 @@ type CartTableProps = {
 
 const CartTable = ({ cart }: CartTableProps) => {
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
 
   return (
     <>
@@ -43,6 +50,29 @@ const CartTable = ({ cart }: CartTableProps) => {
               </TableBody>
             </Table>
           </div>
+
+          <Card>
+            <CardContent className="gap-4 p-4">
+              <div className="pb-3 text-xl">
+                SubTotal ({cart.items.reduce((acc, item) => acc + item.qty, 0)}
+                ):{' '}
+                <span className="font-bold">
+                  {formatCurrency(cart.itemsPrice)}
+                </span>
+              </div>
+              <Button
+                className="w-full cursor-pointer"
+                disabled={isPending}
+                onClick={() => {
+                  startTransition(() => router.push('/shipping-address'));
+                }}
+                aria-disabled={isPending}
+              >
+                <LoadingIcon pending={isPending} Icon={ArrowRight} /> Proceed To
+                Checkout
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       )}
     </>

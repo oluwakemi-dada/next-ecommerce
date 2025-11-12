@@ -1,12 +1,12 @@
 'use client';
 import { useState, useTransition } from 'react';
-import { Plus, Minus, Loader } from 'lucide-react';
+import { Plus, Minus } from 'lucide-react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import LoadingIcon from '@/components/shared/icon-or-loader';
 import { addItemToCart, removeItemFromCart } from '@/lib/actions/cart.actions';
 import { Cart, CartItem } from '@/types';
-import IconOrLoader from '../../../../components/shared/icon-or-loader';
 
 type AddToCartProps = { cart?: Cart; item: CartItem; outOfStock: boolean };
 
@@ -69,7 +69,7 @@ const AddToCart = ({ cart, item, outOfStock }: AddToCartProps) => {
         disabled={isPending}
         aria-disabled={isPending}
       >
-        <IconOrLoader
+        <LoadingIcon
           pending={isPending && actionType === 'remove'}
           Icon={Minus}
         />
@@ -85,7 +85,7 @@ const AddToCart = ({ cart, item, outOfStock }: AddToCartProps) => {
         disabled={isPending}
         aria-disabled={isPending}
       >
-        <IconOrLoader pending={isPending && actionType === 'add'} Icon={Plus} />
+        <LoadingIcon pending={isPending && actionType === 'add'} Icon={Plus} />
       </Button>
     </div>
   ) : (
@@ -96,7 +96,7 @@ const AddToCart = ({ cart, item, outOfStock }: AddToCartProps) => {
       disabled={outOfStock || isPending}
       aria-disabled={outOfStock || isPending}
     >
-      <IconOrLoader pending={isPending && actionType === 'add'} Icon={Plus} />
+      <LoadingIcon pending={isPending && actionType === 'add'} Icon={Plus} />
       Add To Cart
     </Button>
   );
