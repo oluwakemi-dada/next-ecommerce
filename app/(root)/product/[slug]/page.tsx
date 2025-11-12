@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import ProductDetails from '@/components/shared/product/product-details';
+import ProductDetails from '@/app/(root)/product/[slug]/product-details';
 import Loader from '@/components/shared/loader';
 import { getAllProducts } from '@/lib/actions/product.actions';
 

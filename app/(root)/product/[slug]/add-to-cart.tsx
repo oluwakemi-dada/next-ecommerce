@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { addItemToCart, removeItemFromCart } from '@/lib/actions/cart.actions';
 import { Cart, CartItem } from '@/types';
-import IconOrLoader from '../icon-or-loader';
+import IconOrLoader from '../../../../components/shared/icon-or-loader';
 
 type AddToCartProps = { cart?: Cart; item: CartItem; outOfStock: boolean };
 

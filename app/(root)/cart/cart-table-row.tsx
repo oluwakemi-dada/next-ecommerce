@@ -1,6 +1,6 @@
 import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
-import { ArrowRight, Loader, Minus, Plus } from 'lucide-react';
+import { ArrowRight, Minus, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { TableRow, TableCell } from '@/components/ui/table';
 import IconOrLoader from '@/components/shared/icon-or-loader';

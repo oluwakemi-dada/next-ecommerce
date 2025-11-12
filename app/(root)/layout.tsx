@@ -1,5 +1,5 @@
 import { SessionProvider } from 'next-auth/react';
-import Footer from '@/components/footer';
+import Footer from '@/components/shared/footer';
 import Header from '@/components/shared/header';
 
 export default function RootLayout({

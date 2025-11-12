@@ -1,5 +1,5 @@
 import { Product } from '@/types';
-import ProductPrice from './product-price';
+import ProductPrice from '../../../../components/shared/product/product-price';
 
 type ProductInfoProps = {
   product: Product;

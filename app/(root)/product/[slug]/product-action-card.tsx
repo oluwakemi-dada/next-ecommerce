@@ -1,9 +1,9 @@
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import AddToCart from '@/components/shared/product/add-to-cart';
+import AddToCart from '@/app/(root)/product/[slug]/add-to-cart';
 import { getMyCart } from '@/lib/actions/cart.actions';
 import { Product } from '@/types';
-import ProductPrice from './product-price';
+import ProductPrice from '../../../../components/shared/product/product-price';
 
 type ProductActionCardProps = {
   product: Product;
