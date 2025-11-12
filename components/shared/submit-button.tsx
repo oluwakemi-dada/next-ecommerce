@@ -16,6 +16,7 @@ const SubmitButton = ({ children, pendingLabel }: SubmitButton) => {
       disabled={pending}
       className="w-full cursor-pointer"
       variant="default"
+      aria-disabled={pending}
     >
       {pending ? pendingLabel : children}
     </Button>

@@ -12,10 +12,6 @@ type ProductActionCardProps = {
 const ProductActionCard = async ({ product }: ProductActionCardProps) => {
   const cart = await getMyCart();
 
-  const normalizedCart = cart
-    ? { ...cart, userId: cart.userId ?? undefined }
-    : undefined;
-
   return (
     <div>
       <Card className="py-1">
@@ -38,7 +34,7 @@ const ProductActionCard = async ({ product }: ProductActionCardProps) => {
 
           <div className="flex-center pt-5">
             <AddToCart
-              cart={normalizedCart}
+              cart={cart}
               item={{
                 name: product.name,
                 slug: product.slug,

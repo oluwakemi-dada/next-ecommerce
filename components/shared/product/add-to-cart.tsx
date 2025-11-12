@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { addItemToCart, removeItemFromCart } from '@/lib/actions/cart.actions';
 import { Cart, CartItem } from '@/types';
+import IconOrLoader from '../icon-or-loader';
 
 type AddToCartProps = { cart?: Cart; item: CartItem; outOfStock: boolean };
 
@@ -58,13 +59,6 @@ const AddToCart = ({ cart, item, outOfStock }: AddToCartProps) => {
   const existItem =
     cart && cart.items.find((x) => x.productId === item.productId);
 
-  const IconOrLoader = ({ pending, Icon }: { pending: boolean; Icon: any }) =>
-    pending ? (
-      <Loader className="h-4 w-4 animate-spin" />
-    ) : (
-      <Icon className="h-4 w-4" />
-    );
-
   return existItem ? (
     <div className="flex items-center gap-2">
       <Button
@@ -73,6 +67,7 @@ const AddToCart = ({ cart, item, outOfStock }: AddToCartProps) => {
         className="cursor-pointer"
         onClick={handleRemoveFromCart}
         disabled={isPending}
+        aria-disabled={isPending}
       >
         <IconOrLoader
           pending={isPending && actionType === 'remove'}
@@ -88,6 +83,7 @@ const AddToCart = ({ cart, item, outOfStock }: AddToCartProps) => {
         className="cursor-pointer"
         onClick={handleAddToCart}
         disabled={isPending}
+        aria-disabled={isPending}
       >
         <IconOrLoader pending={isPending && actionType === 'add'} Icon={Plus} />
       </Button>
@@ -98,6 +94,7 @@ const AddToCart = ({ cart, item, outOfStock }: AddToCartProps) => {
       className="w-full cursor-pointer"
       onClick={handleAddToCart}
       disabled={outOfStock || isPending}
+      aria-disabled={outOfStock || isPending}
     >
       <IconOrLoader pending={isPending && actionType === 'add'} Icon={Plus} />
       Add To Cart
