@@ -1,19 +1,37 @@
 'use client';
-import { useState, useTransition } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { Plus, Minus } from 'lucide-react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import LoadingIcon from '@/components/shared/icon-or-loader';
-import { addItemToCart, removeItemFromCart } from '@/lib/actions/cart.actions';
+import {
+  addItemToCart,
+  getMyCart,
+  removeItemFromCart,
+} from '@/lib/actions/cart.actions';
 import { Cart, CartItem } from '@/types';
+import Loader from '@/components/shared/loader';
 
-type AddToCartProps = { cart?: Cart; item: CartItem; outOfStock: boolean };
+type AddToCartProps = { item: CartItem; outOfStock: boolean };
 
-const AddToCart = ({ cart, item, outOfStock }: AddToCartProps) => {
+const AddToCart = ({ item, outOfStock }: AddToCartProps) => {
   const router = useRouter();
+  const [cart, setCart] = useState<Cart | undefined>(undefined);
   const [isPending, startTransition] = useTransition();
   const [actionType, setActionType] = useState<'add' | 'remove' | null>(null);
+
+  const fetchCart = async () => {
+    const updatedCart = await getMyCart();
+    setCart(updatedCart);
+  };
+
+  useEffect(() => {
+    startTransition(fetchCart);
+  }, []);
+
+  // Early return while loading
+  if (!cart) return <Loader />;
 
   // Handle add from cart
   const handleAddToCart = async () => {
@@ -25,6 +43,8 @@ const AddToCart = ({ cart, item, outOfStock }: AddToCartProps) => {
         toast.error(res.message);
         return;
       }
+
+      await fetchCart();
 
       // Handle success add to cart
       toast.success(res.message, {
@@ -50,6 +70,8 @@ const AddToCart = ({ cart, item, outOfStock }: AddToCartProps) => {
         toast.error(res.message);
         return;
       }
+
+      await fetchCart();
 
       toast.success(res.message);
     });
