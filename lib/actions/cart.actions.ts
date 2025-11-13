@@ -134,9 +134,13 @@ export const addItemToCart = async (data: CartItem) => {
 
       revalidatePath(`/product/${product.slug}`);
 
+      // Fetch and return the updated cart
+      const updatedCart = await getMyCart();
+
       return {
         success: true,
         message: `${product.name} ${existItem ? 'updated in' : 'added to'} cart`,
+        cart: updatedCart,
       };
     }
   } catch (error) {
@@ -193,9 +197,13 @@ export const removeItemFromCart = async (productId: string) => {
 
     revalidatePath(`/product/${product.slug}`);
 
+    // Fetch and return the updated cart
+    const updatedCart = await getMyCart();
+
     return {
       success: true,
       message: `${product.name} was removed from cart`,
+      cart: updatedCart,
     };
   } catch (error) {
     return {

@@ -21,13 +21,11 @@ const AddToCart = ({ item, outOfStock }: AddToCartProps) => {
   const [isPending, startTransition] = useTransition();
   const [actionType, setActionType] = useState<'add' | 'remove' | null>(null);
 
-  const fetchCart = async () => {
-    const updatedCart = await getMyCart();
-    setCart(updatedCart);
-  };
-
   useEffect(() => {
-    startTransition(fetchCart);
+    startTransition(async () => {
+      const updatedCart = await getMyCart();
+      setCart(updatedCart);
+    });
   }, []);
 
   // Early return while loading
@@ -44,7 +42,7 @@ const AddToCart = ({ item, outOfStock }: AddToCartProps) => {
         return;
       }
 
-      await fetchCart();
+      setCart(res.cart);
 
       // Handle success add to cart
       toast.success(res.message, {
@@ -71,7 +69,7 @@ const AddToCart = ({ item, outOfStock }: AddToCartProps) => {
         return;
       }
 
-      await fetchCart();
+      setCart(res.cart);
 
       toast.success(res.message);
     });
