@@ -22,10 +22,22 @@ const AddToCart = ({ item, outOfStock }: AddToCartProps) => {
   const [actionType, setActionType] = useState<'add' | 'remove' | null>(null);
 
   useEffect(() => {
-    startTransition(async () => {
-      const updatedCart = await getMyCart();
-      setCart(updatedCart);
-    });
+    let ignore = false;
+
+    const fetchCart = async () => {
+      try {
+        const updatedCart = await getMyCart();
+        if (!ignore) setCart(updatedCart);
+      } catch (err) {
+        if (!ignore) console.error(err);
+      }
+    };
+
+    fetchCart();
+
+    return () => {
+      ignore = true;
+    };
   }, []);
 
   // Early return while loading
