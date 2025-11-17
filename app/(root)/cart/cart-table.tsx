@@ -14,7 +14,7 @@ import { formatCurrency } from '@/lib/utils';
 import { Cart } from '@/types';
 import CartTableRow from './cart-table-row';
 import { Button } from '@/components/ui/button';
-import LoadingIcon from '@/components/shared/icon-or-loader';
+import LoadingIcon from '@/components/shared/loading-icon';
 import { ArrowRight } from 'lucide-react';
 
 type CartTableProps = {

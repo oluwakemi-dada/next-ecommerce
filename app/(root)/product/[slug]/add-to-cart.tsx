@@ -4,7 +4,7 @@ import { Plus, Minus } from 'lucide-react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import LoadingIcon from '@/components/shared/icon-or-loader';
+import LoadingIcon from '@/components/shared/loading-icon';
 import {
   addItemToCart,
   getMyCart,

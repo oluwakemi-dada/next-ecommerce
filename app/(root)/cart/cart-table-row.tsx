@@ -3,7 +3,7 @@ import { toast } from 'sonner';
 import { Minus, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { TableRow, TableCell } from '@/components/ui/table';
-import LoadingIcon from '@/components/shared/icon-or-loader';
+import LoadingIcon from '@/components/shared/loading-icon';
 import Image from 'next/image';
 import { addItemToCart, removeItemFromCart } from '@/lib/actions/cart.actions';
 import { Button } from '@/components/ui/button';
@@ -30,6 +30,7 @@ const CartTableRow = ({ item }: CartTableRowProps) => {
           disabled={isPending}
           variant="outline"
           type="button"
+          className="cursor-pointer"
           onClick={() => {
             setActionType('remove');
             startTransition(async () => {
@@ -52,6 +53,7 @@ const CartTableRow = ({ item }: CartTableRowProps) => {
           disabled={isPending}
           variant="outline"
           type="button"
+          className="cursor-pointer"
           onClick={() => {
             setActionType('add');
             startTransition(async () => {
