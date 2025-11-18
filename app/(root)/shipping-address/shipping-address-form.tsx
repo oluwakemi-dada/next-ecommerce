@@ -2,12 +2,10 @@
 import { useTransition } from 'react';
 import { toast } from 'sonner';
 import { z } from 'zod';
+import { ArrowRight } from 'lucide-react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, SubmitHandler } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
-import { shippingAddressSchema } from '@/lib/validators';
-import { shippingAddress } from '@/types';
-import { shippingAddressDefaultValues } from '@/lib/constants';
 import {
   Field,
   FieldError,
@@ -17,10 +15,13 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import LoadingIcon from '@/components/shared/loading-icon';
-import { ArrowRight } from 'lucide-react';
+import { updateUserAddress } from '@/lib/actions/user.actions';
+import { shippingAddressSchema } from '@/lib/validators';
+import { shippingAddressDefaultValues } from '@/lib/constants';
+import { ShippingAddress } from '@/types';
 
 type ShippingAddressFormProps = {
-  address: shippingAddress;
+  address: ShippingAddress;
 };
 
 const ShippingAddressForm = ({ address }: ShippingAddressFormProps) => {
@@ -33,8 +34,19 @@ const ShippingAddressForm = ({ address }: ShippingAddressFormProps) => {
 
   const [isPending, startTransition] = useTransition();
 
-  const onSubmit = (values: z.infer<typeof shippingAddressSchema>) => {
-    console.log(values);
+  const onSubmit: SubmitHandler<z.infer<typeof shippingAddressSchema>> = async (
+    values: z.infer<typeof shippingAddressSchema>,
+  ) => {
+    startTransition(async () => {
+      const res = await updateUserAddress(values);
+
+      if (!res.success) {
+        toast.error(res.message);
+        return;
+      }
+
+      router.push('/payment-method');
+    });
   };
 
   return (
