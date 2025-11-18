@@ -1,5 +1,8 @@
 import { hashSync } from 'bcrypt-ts-edge';
 
+const sizes = ['S', 'M', 'L', 'XL', '2XL', '3XL'];
+const defaultStock = 10;
+
 const sampleData = {
   users: [
     {
@@ -15,7 +18,11 @@ const sampleData = {
       role: 'user',
     },
   ],
+
   products: [
+    // ==========================================
+    // 1) Polo Sporting Stretch Shirt (size + color)
+    // ==========================================
     {
       name: 'Polo Sporting Stretch Shirt',
       slug: 'polo-sporting-stretch-shirt',
@@ -29,10 +36,31 @@ const sampleData = {
       brand: 'Polo',
       rating: 4.5,
       numReviews: 10,
-      stock: 5,
       isFeatured: true,
       banner: 'banner-1.jpg',
+      variants: [
+        ...['S', 'M', 'L', 'XL'].map((size) => ({
+          color: 'Black',
+          size,
+          stock: defaultStock,
+          sku: `PSS-BLK-${size}`,
+          price: size === 'XL' ? 64.99 : 59.99, // XL costs more
+          image: '/images/sample-products/p1-1.jpg',
+        })),
+        ...['S', 'M', 'L'].map((size) => ({
+          color: 'White',
+          size,
+          stock: defaultStock,
+          sku: `PSS-WHT-${size}`,
+          price: 59.99,
+          image: '/images/sample-products/p1-2.jpg',
+        })),
+      ],
     },
+
+    // ==========================================
+    // 2) Brooks Brothers Long Sleeved Shirt (size + color)
+    // ==========================================
     {
       name: 'Brooks Brothers Long Sleeved Shirt',
       slug: 'brooks-brothers-long-sleeved-shirt',
@@ -46,10 +74,31 @@ const sampleData = {
       brand: 'Brooks Brothers',
       rating: 4.2,
       numReviews: 8,
-      stock: 10,
       isFeatured: true,
       banner: 'banner-2.jpg',
+      variants: [
+        ...['M', 'L', 'XL'].map((size) => ({
+          color: 'Blue',
+          size,
+          stock: defaultStock,
+          sku: `BBL-BLU-${size}`,
+          price: 85.9,
+          image: '/images/sample-products/p2-1.jpg',
+        })),
+        ...['S', 'M', 'L'].map((size) => ({
+          color: 'Gray',
+          size,
+          stock: defaultStock,
+          sku: `BBL-GRY-${size}`,
+          price: size === 'L' ? 90.0 : 85.9, // L gray is slightly more
+          image: '/images/sample-products/p2-2.jpg',
+        })),
+      ],
     },
+
+    // ==========================================
+    // 3) Tommy Hilfiger Classic Fit Dress Shirt (size only)
+    // ==========================================
     {
       name: 'Tommy Hilfiger Classic Fit Dress Shirt',
       slug: 'tommy-hilfiger-classic-fit-dress-shirt',
@@ -63,10 +112,23 @@ const sampleData = {
       brand: 'Tommy Hilfiger',
       rating: 4.9,
       numReviews: 3,
-      stock: 0,
       isFeatured: false,
       banner: null,
+      variants: [
+        ...['M', 'L', 'XL'].map((size) => ({
+          color: 'White',
+          size,
+          stock: defaultStock,
+          sku: `THC-WHT-${size}`,
+          price: 99.95,
+          image: '/images/sample-products/p3-1.jpg',
+        })),
+      ],
     },
+
+    // ==========================================
+    // 4) Calvin Klein Slim Fit Stretch Shirt (size only)
+    // ==========================================
     {
       name: 'Calvin Klein Slim Fit Stretch Shirt',
       slug: 'calvin-klein-slim-fit-stretch-shirt',
@@ -80,10 +142,23 @@ const sampleData = {
       brand: 'Calvin Klein',
       rating: 3.6,
       numReviews: 5,
-      stock: 10,
       isFeatured: false,
       banner: null,
+      variants: [
+        ...['S', 'M', 'L'].map((size) => ({
+          color: 'Light Blue',
+          size,
+          stock: defaultStock,
+          sku: `CKS-LBL-${size}`,
+          price: 39.95,
+          image: '/images/sample-products/p4-1.jpg',
+        })),
+      ],
     },
+
+    // ==========================================
+    // 5) Polo Ralph Lauren Oxford Shirt (color only)
+    // ==========================================
     {
       name: 'Polo Ralph Lauren Oxford Shirt',
       slug: 'polo-ralph-lauren-oxford-shirt',
@@ -97,10 +172,31 @@ const sampleData = {
       brand: 'Polo',
       rating: 4.7,
       numReviews: 18,
-      stock: 6,
       isFeatured: false,
       banner: null,
+      variants: [
+        {
+          color: 'Blue',
+          size: 'M',
+          stock: defaultStock,
+          sku: 'PRL-BLU-M',
+          price: 79.99,
+          image: '/images/sample-products/p5-1.jpg',
+        },
+        {
+          color: 'Pink',
+          size: 'M',
+          stock: defaultStock,
+          sku: 'PRL-PNK-M',
+          price: 84.99,
+          image: '/images/sample-products/p5-2.jpg',
+        }, // Pink premium
+      ],
     },
+
+    // ==========================================
+    // 6) Polo Classic Pink Hoodie (size only)
+    // ==========================================
     {
       name: 'Polo Classic Pink Hoodie',
       slug: 'polo-classic-pink-hoodie',
@@ -114,9 +210,18 @@ const sampleData = {
       brand: 'Polo',
       rating: 4.6,
       numReviews: 12,
-      stock: 8,
       isFeatured: true,
       banner: null,
+      variants: [
+        ...['S', 'M', 'L', 'XL', '2XL'].map((size) => ({
+          color: 'Pink',
+          size,
+          stock: defaultStock,
+          sku: `PHD-PNK-${size}`,
+          price: size === '2XL' ? 104.99 : 99.99, // 2XL premium
+          image: '/images/sample-products/p6-1.jpg',
+        })),
+      ],
     },
   ],
 };

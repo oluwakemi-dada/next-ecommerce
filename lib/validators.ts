@@ -8,6 +8,20 @@ const currency = z
     'Price must have exactly two decimal places',
   );
 
+// Variant schema
+export const variantSchema = z.object({
+  color: z.string().optional().nullable(),
+  size: z.string().optional().nullable(),
+  stock: z.coerce
+    .number()
+    .int('Stock must be an integer')
+    .min(0, 'Stock must be 0 or more'),
+  price: currency.optional().nullable(),
+  sku: z.string().min(1, 'SKU is required'),
+  image: z.string().nullable().optional(),
+  isActive: z.boolean().optional().default(true),
+});
+
 // Schema for inserting products
 export const insertProductSchema = z.object({
   name: z.string().min(3, 'Name must be at least 3 characters'),
@@ -15,11 +29,11 @@ export const insertProductSchema = z.object({
   category: z.string().min(3, 'Category must be at least 3 characters'),
   brand: z.string().min(3, 'Brand must be at least 3 characters'),
   description: z.string().min(3, 'Description must be at least 3 characters'),
-  stock: z.coerce.number(),
   images: z.array(z.string()).min(1, 'Product must have at least one image'),
-  isFeatured: z.boolean(),
-  banner: z.string().nullable(),
+  banner: z.string().nullable().optional(),
+  isFeatured: z.boolean().default(false),
   price: currency,
+  variants: z.array(variantSchema).optional().default([]),
 });
 
 // Schema for signing in users
