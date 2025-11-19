@@ -58,11 +58,12 @@ const CartTableRow = ({ item }: CartTableRowProps) => {
         {item.color && <div>Color: {item.color}</div>}
 
         <div className="flex justify-between">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <Button
               variant="outline"
               disabled={loading !== null}
               onClick={handleRemove}
+              className="cursor-pointer"
             >
               <LoadingIcon pending={loading === 'remove'} Icon={Minus} />
             </Button>
@@ -73,6 +74,7 @@ const CartTableRow = ({ item }: CartTableRowProps) => {
               variant="outline"
               disabled={loading !== null}
               onClick={handleAdd}
+              className="cursor-pointer"
             >
               <LoadingIcon pending={loading === 'add'} Icon={Plus} />
             </Button>

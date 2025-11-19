@@ -106,12 +106,13 @@ const AddToCart = ({ product, outOfStock }: AddToCartProps) => {
 
       <div className="mt-7">
         {existItem ? (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <Button
               type="button"
               variant="outline"
               onClick={handleRemoveFromCart}
               disabled={loading}
+              className="cursor-pointer"
             >
               <LoadingIcon
                 pending={loading && actionType === 'remove'}
@@ -126,6 +127,7 @@ const AddToCart = ({ product, outOfStock }: AddToCartProps) => {
               variant="outline"
               onClick={handleAddToCart}
               disabled={loading}
+              className="cursor-pointer"
             >
               <LoadingIcon
                 pending={loading && actionType === 'add'}

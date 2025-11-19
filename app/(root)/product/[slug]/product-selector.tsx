@@ -130,14 +130,15 @@ const ProductSelector = ({
               return (
                 <Button
                   key={color}
+                  size="icon"
                   variant={color === selectedColor ? 'default' : 'outline'}
                   onClick={() => setSelectedColor(color!)}
                   style={{ backgroundColor: color! }}
                   className={clsx(
-                    'h-7 w-7 cursor-pointer rounded-full border transition',
+                    'h-8 w-8 cursor-pointer rounded-full border transition',
                     isSelected
-                      ? 'ring-accent-foreground scale-110 border-transparent ring-1 ring-offset-1'
-                      : 'border-muted',
+                      ? 'ring-accent-foreground border-transparent ring-1 ring-offset-1'
+                      : 'border-gray-300',
                   )}
                 ></Button>
               );
