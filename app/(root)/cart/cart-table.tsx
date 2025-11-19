@@ -27,31 +27,20 @@ const CartTable = ({ cart }: CartTableProps) => {
 
   return (
     <>
-      <h1 className="h2-bold py-4">Shopping Cart</h1>
+      <h1 className="h2-bold mb-4 py-4">Shopping Cart</h1>
       {!cart || cart.items.length === 0 ? (
         <div>
           Cart is empty. <Link href="/">Go Shopping</Link>
         </div>
       ) : (
-        <div className="grid md:grid-cols-4 md:gap-5">
-          <div className="overflow-x-auto md:col-span-3">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Item</TableHead>
-                  <TableHead className="text-center">Quantity</TableHead>
-                  <TableHead className="text-right">Price</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {cart.items.map((item) => (
-                  <CartTableRow item={item} key={item.variantId} />
-                ))}
-              </TableBody>
-            </Table>
+        <div className="grid gap-10 md:grid-cols-3 md:gap-5 lg:gap-10">
+          <div className="divide-border flex flex-col divide-y overflow-x-auto md:col-span-2">
+            {cart.items.map((item) => (
+              <CartTableRow item={item} key={item.variantId} />
+            ))}
           </div>
 
-          <Card>
+          <Card className="h-fit">
             <CardContent className="gap-4 p-4">
               <div className="pb-3 text-xl">
                 SubTotal ({cart.items.reduce((acc, item) => acc + item.qty, 0)}

@@ -18,63 +18,72 @@ const CartTableRow = ({ item }: CartTableRowProps) => {
   const [actionType, setActionType] = useState<'add' | 'remove' | null>(null);
 
   return (
-    <TableRow key={item.slug}>
-      <TableCell>
-        <Link href={`/product/${item.slug}`} className="flex items-center">
-          <Image src={item.image} alt={item.name} width={50} height={50} />
-          <span className="px-2">{item.name}</span>
+    <div key={item.slug} className="flex gap-5 py-6">
+      <div className="flex items-start">
+        <Link href={`/product/${item.slug}`}>
+          <Image src={item.image} alt={item.name} width={120} height={120} />
         </Link>
-      </TableCell>
-      <TableCell className="flex-center gap-2">
-        <Button
-          disabled={isPending}
-          variant="outline"
-          type="button"
-          className="cursor-pointer"
-          onClick={() => {
-            setActionType('remove');
-            startTransition(async () => {
-              const res = await removeItemFromCart(item.productId);
+      </div>
+      <div className="flex flex-1 flex-col gap-y-2">
+        <div className="font-semibold">{item.name}</div>
+        <div>Size: {item.size}</div>
+        <div>Color: {item.color}</div>
+        <div className="flex justify-between">
+          <div className="flex items-center gap-2">
+            <Button
+              disabled={isPending}
+              variant="outline"
+              type="button"
+              className="cursor-pointer"
+              onClick={() => {
+                setActionType('remove');
+                startTransition(async () => {
+                  const res = await removeItemFromCart(
+                    item.productId,
+                    item.variantId,
+                  );
 
-              if (!res.success) {
-                toast.error(res.message);
-              }
-            });
-          }}
-          aria-disabled={isPending}
-        >
-          <LoadingIcon
-            pending={isPending && actionType === 'remove'}
-            Icon={Minus}
-          />
-        </Button>
-        <span>{item.qty}</span>
-        <Button
-          disabled={isPending}
-          variant="outline"
-          type="button"
-          className="cursor-pointer"
-          onClick={() => {
-            setActionType('add');
-            startTransition(async () => {
-              const res = await addItemToCart(item);
+                  if (!res.success) {
+                    toast.error(res.message);
+                  }
+                });
+              }}
+              aria-disabled={isPending}
+            >
+              <LoadingIcon
+                pending={isPending && actionType === 'remove'}
+                Icon={Minus}
+              />
+            </Button>
+            <span>{item.qty}</span>
+            <Button
+              disabled={isPending}
+              variant="outline"
+              type="button"
+              className="cursor-pointer"
+              onClick={() => {
+                setActionType('add');
+                startTransition(async () => {
+                  const res = await addItemToCart(item);
 
-              if (!res.success) {
-                toast.error(res.message);
-              }
-            });
-          }}
-          aria-disabled={isPending}
-        >
-          <LoadingIcon
-            pending={isPending && actionType === 'add'}
-            Icon={Plus}
-            key="plus"
-          />
-        </Button>
-      </TableCell>
-      <TableCell className="text-right">${item.price}</TableCell>
-    </TableRow>
+                  if (!res.success) {
+                    toast.error(res.message);
+                  }
+                });
+              }}
+              aria-disabled={isPending}
+            >
+              <LoadingIcon
+                pending={isPending && actionType === 'add'}
+                Icon={Plus}
+                key="plus"
+              />
+            </Button>
+          </div>
+          <div className="text-right font-semibold">${item.price}</div>
+        </div>
+      </div>
+    </div>
   );
 };
 

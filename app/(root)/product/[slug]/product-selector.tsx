@@ -1,10 +1,8 @@
 'use client';
-
-import { Badge } from '@/components/ui/badge';
+import { useState, useEffect } from 'react';
+import clsx from 'clsx';
 import { Button } from '@/components/ui/button';
 import { VariantInput } from '@/types';
-import clsx from 'clsx';
-import { useState, useEffect } from 'react';
 
 type ProductSelectorProps = {
   variants: VariantInput[];
