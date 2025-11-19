@@ -69,6 +69,7 @@ export const formatCurrency = (amount: number | string | null) => {
   }
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const serializeVariant = (variant: any) => {
   return {
     ...variant,
@@ -78,6 +79,7 @@ const serializeVariant = (variant: any) => {
   };
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const serializeProduct = (product: any) => {
   return {
     ...product,
