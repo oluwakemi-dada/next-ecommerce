@@ -3,6 +3,7 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { VariantInput } from '@/types';
+import clsx from 'clsx';
 import { useState, useEffect } from 'react';
 
 type ProductSelectorProps = {
@@ -59,37 +60,19 @@ const ProductSelector = ({
   ]);
 
   return (
-    <div className="space-y-4">
-      {/* Color Selector */}
-      {hasColors && (
-        <div>
-          <div className="mb-1 font-medium">Color</div>
-          <div className="flex gap-2">
-            {colors.map((color) => (
-              <Button
-                key={color}
-                variant={color === selectedColor ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setSelectedColor(color!)}
-              >
-                {color}
-              </Button>
-            ))}
-          </div>
-        </div>
-      )}
-
+    <div className="space-y-7">
       {/* Size Selector */}
       {hasSizes && (
-        <div>
-          <div className="mb-1 font-medium">Size</div>
-          <div className="flex gap-2">
+        <div className="">
+          <div className="mb-3 font-medium">Available Sizes</div>
+          <div className="flex gap-3">
             {sizes.map((size) => (
               <Button
                 key={size}
                 variant={size === selectedSize ? 'default' : 'outline'}
-                size="sm"
+                size='default'
                 onClick={() => setSelectedSize(size!)}
+                className='cursor-pointer'
               >
                 {size}
               </Button>
@@ -98,36 +81,29 @@ const ProductSelector = ({
         </div>
       )}
 
-      {/* Stock / Availability */}
-      <div>
-        {availableVariants.find(
-          (v) =>
-            (!hasColors || v.color === selectedColor) &&
-            (!hasSizes || v.size === selectedSize),
-        ) ? (
-          <Badge
-            variant={
-              availableVariants.find(
-                (v) =>
-                  (!hasColors || v.color === selectedColor) &&
-                  (!hasSizes || v.size === selectedSize),
-              )!.stock > 0
-                ? 'outline'
-                : 'destructive'
-            }
-          >
-            {availableVariants.find(
-              (v) =>
-                (!hasColors || v.color === selectedColor) &&
-                (!hasSizes || v.size === selectedSize),
-            )!.stock > 0
-              ? 'In Stock'
-              : 'Out of Stock'}
-          </Badge>
-        ) : (
-          <Badge variant="destructive">Unavailable</Badge>
-        )}
-      </div>
+      {/* Color Selector */}
+      {hasColors && (
+        <div>
+          <div className="mb-3 font-medium">Available Color</div>
+          <div className="flex gap-3">
+            {colors.map((color) => (
+              <Button
+                key={color}
+                variant={color === selectedColor ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setSelectedColor(color!)}
+                style={{ backgroundColor: color! }}
+                className={clsx(
+                  'h-8 w-8 cursor-pointer rounded-full border',
+                  selectedColor === color
+                    ? 'ring-accent-foreground border-transparent ring-1 ring-offset-1'
+                    : 'border-muted',
+                )}
+              ></Button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

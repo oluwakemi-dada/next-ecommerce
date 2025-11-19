@@ -24,7 +24,7 @@ const ProductInfo = ({ product }: ProductInfoProps) => {
         </div>
       </div>
 
-      <div className="mt-10">
+      <div className="mt-7 mb-5">
         <p className="font-semibold">Description</p>
         <p>{product.description}</p>
       </div>

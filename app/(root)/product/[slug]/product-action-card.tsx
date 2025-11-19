@@ -1,8 +1,6 @@
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
 import AddToCart from '@/app/(root)/product/[slug]/add-to-cart';
 import { Product } from '@/types';
-import ProductPrice from '../../../../components/shared/product/product-price';
 
 type ProductActionCardProps = {
   product: Product;
@@ -10,36 +8,22 @@ type ProductActionCardProps = {
 
 const ProductActionCard = async ({ product }: ProductActionCardProps) => {
   return (
-    <div>
-      <Card className="py-1">
-        <CardContent className="p-4">
-          <div className="mb-2 flex justify-between">
-            <div>Price</div>
-            <div>
-              <ProductPrice value={Number(product.price)} />
-            </div>
-          </div>
+    <>
+      <div className="flex justify-between">
+        {product.variants.some((variant) => variant.stock > 0) ? (
+          <Badge variant="outline">In Stock</Badge>
+        ) : (
+          <Badge variant="destructive">Out Of Stock</Badge>
+        )}
+      </div>
 
-          <div className="mb-2 flex justify-between">
-            <div>Status</div>
-            {product.variants.some((variant) => variant.stock > 0) ? (
-              <Badge variant="outline">In Stock</Badge>
-            ) : (
-              <Badge variant="destructive">Out Of Stock</Badge>
-            )}
-          </div>
-
-          <div className="flex-center pt-5">
-            <AddToCart
-              product={product}
-              outOfStock={product.variants.every(
-                (variant) => variant.stock < 1,
-              )}
-            />
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+      <div className="pt-5">
+        <AddToCart
+          product={product}
+          outOfStock={product.variants.every((variant) => variant.stock < 1)}
+        />
+      </div>
+    </>
   );
 };
 

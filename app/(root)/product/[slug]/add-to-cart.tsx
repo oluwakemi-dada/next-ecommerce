@@ -121,60 +121,60 @@ const AddToCart = ({ product, outOfStock }: AddToCartProps) => {
 
   return (
     <div>
-      <div>
-        <ProductSelector
-          variants={product.variants}
-          selectedVariant={selectedVariant}
-          onSelectVariant={setSelectedVariant}
-        />
-      </div>
-      {existItem ? (
-        <div className="flex items-center gap-2">
+      <ProductSelector
+        variants={product.variants}
+        selectedVariant={selectedVariant}
+        onSelectVariant={setSelectedVariant}
+      />
+      <div className='mt-7'>
+        {existItem ? (
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              className="cursor-pointer"
+              onClick={handleRemoveFromCart}
+              disabled={isPending}
+              aria-disabled={isPending}
+            >
+              <LoadingIcon
+                pending={isPending && actionType === 'remove'}
+                Icon={Minus}
+              />
+            </Button>
+
+            <span className="px-2">{existItem.qty}</span>
+
+            <Button
+              type="button"
+              variant="outline"
+              className="cursor-pointer"
+              onClick={handleAddToCart}
+              disabled={isPending}
+              aria-disabled={isPending}
+            >
+              <LoadingIcon
+                pending={isPending && actionType === 'add'}
+                Icon={Plus}
+              />
+            </Button>
+          </div>
+        ) : (
           <Button
             type="button"
-            variant="outline"
-            className="cursor-pointer"
-            onClick={handleRemoveFromCart}
-            disabled={isPending}
-            aria-disabled={isPending}
-          >
-            <LoadingIcon
-              pending={isPending && actionType === 'remove'}
-              Icon={Minus}
-            />
-          </Button>
-
-          <span className="px-2">{existItem.qty}</span>
-
-          <Button
-            type="button"
-            variant="outline"
-            className="cursor-pointer"
+            className="w-full cursor-pointer"
             onClick={handleAddToCart}
-            disabled={isPending}
-            aria-disabled={isPending}
+            disabled={outOfStock || isPending}
+            aria-disabled={outOfStock || isPending}
           >
             <LoadingIcon
               pending={isPending && actionType === 'add'}
               Icon={Plus}
             />
+            Add To Cart
           </Button>
-        </div>
-      ) : (
-        <Button
-          type="button"
-          className="w-full cursor-pointer"
-          onClick={handleAddToCart}
-          disabled={outOfStock || isPending}
-          aria-disabled={outOfStock || isPending}
-        >
-          <LoadingIcon
-            pending={isPending && actionType === 'add'}
-            Icon={Plus}
-          />
-          Add To Cart
-        </Button>
-      )}
+        )}
+      </div>
     </div>
   );
 };
