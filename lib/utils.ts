@@ -68,3 +68,23 @@ export const formatCurrency = (amount: number | string | null) => {
     return 'NaN';
   }
 };
+
+const serializeVariant = (variant: any) => {
+  return {
+    ...variant,
+    price: variant.price?.toString() || null,
+    createdAt: variant.createdAt.toISOString(),
+    updatedAt: variant.updatedAt.toISOString(),
+  };
+};
+
+export const serializeProduct = (product: any) => {
+  return {
+    ...product,
+    price: product.price.toString(),
+    rating: product.rating.toString(),
+    createdAt: product.createdAt.toISOString(),
+    updatedAt: product.updatedAt.toISOString(),
+    variants: product.variants?.map(serializeVariant) || [],
+  };
+};

@@ -22,7 +22,7 @@ const ProductActionCard = async ({ product }: ProductActionCardProps) => {
 
           <div className="mb-2 flex justify-between">
             <div>Status</div>
-            {product.stock > 0 ? (
+            {product.variants.some((variant) => variant.stock > 0) ? (
               <Badge variant="outline">In Stock</Badge>
             ) : (
               <Badge variant="destructive">Out Of Stock</Badge>
@@ -31,15 +31,10 @@ const ProductActionCard = async ({ product }: ProductActionCardProps) => {
 
           <div className="flex-center pt-5">
             <AddToCart
-              item={{
-                name: product.name,
-                slug: product.slug,
-                price: product.price,
-                image: product.images[0],
-                productId: product.id,
-                qty: 1,
-              }}
-              outOfStock={product.stock < 1}
+              product={product}
+              outOfStock={product.variants.every(
+                (variant) => variant.stock < 1,
+              )}
             />
           </div>
         </CardContent>

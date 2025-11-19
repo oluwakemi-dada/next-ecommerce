@@ -144,16 +144,7 @@ const sampleData = {
       numReviews: 5,
       isFeatured: false,
       banner: null,
-      variants: [
-        ...['S', 'M', 'L'].map((size) => ({
-          color: 'Light Blue',
-          size,
-          stock: defaultStock,
-          sku: `CKS-LBL-${size}`,
-          price: 39.95,
-          image: '/images/sample-products/p4-1.jpg',
-        })),
-      ],
+      variants: [],
     },
 
     // ==========================================

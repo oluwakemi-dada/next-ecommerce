@@ -45,7 +45,7 @@ const CartTable = ({ cart }: CartTableProps) => {
               </TableHeader>
               <TableBody>
                 {cart.items.map((item) => (
-                  <CartTableRow item={item} key={item.productId} />
+                  <CartTableRow item={item} key={item.variantId} />
                 ))}
               </TableBody>
             </Table>
