@@ -84,10 +84,15 @@ export const addItemToCart = async (data: CartItem) => {
           isActive: true,
         },
       });
+
+      product = await prisma.product.findUnique({
+        where: { id: item.productId },
+      });
+
       if (!variant) throw new Error('Product variant not found');
       if (variant.stock < 1) throw new Error('Variant is out of stock');
 
-      itemName = variant.sku;
+      itemName = product ? product?.name : variant.sku;
       availableStock = variant.stock;
     } else {
       // No variant — fetch the product itself

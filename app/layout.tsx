@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google';
 import '@/assets/styles/globals.css';
 import { Toaster } from '@/components/ui/sonner';
 import { APP_NAME, APP_DESCRIPTION, SERVER_URL } from '@/lib/constants';
+import { CartProvider } from '@/contexts/cart-context';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -32,8 +33,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
-          <Toaster richColors />
+          <CartProvider>
+            {children}
+            <Toaster richColors />
+          </CartProvider>
         </ThemeProvider>
       </body>
     </html>

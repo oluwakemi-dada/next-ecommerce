@@ -1,18 +1,16 @@
 'use client';
-import { useEffect, useState, useTransition } from 'react';
+
+import { useState } from 'react';
 import { Plus, Minus } from 'lucide-react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import LoadingIcon from '@/components/shared/loading-icon';
-import {
-  addItemToCart,
-  getMyCart,
-  removeItemFromCart,
-} from '@/lib/actions/cart.actions';
-import { Cart, CartItem, Product, VariantInput } from '@/types';
+import { addItemToCart, removeItemFromCart } from '@/lib/actions/cart.actions';
+import { CartItem, Product, VariantInput } from '@/types';
 import ProductSelector from './product-selector';
 import Loader from '@/components/shared/loader';
+import { useCart } from '@/contexts/cart-context';
 
 type AddToCartProps = {
   product: Product;
@@ -21,13 +19,13 @@ type AddToCartProps = {
 
 const AddToCart = ({ product, outOfStock }: AddToCartProps) => {
   const router = useRouter();
-  const [cart, setCart] = useState<Cart | undefined>(undefined);
-  const [isPending, startTransition] = useTransition();
+  const { cart, setCart } = useCart();
+
+  const [loading, setLoading] = useState(false);
   const [actionType, setActionType] = useState<'add' | 'remove' | null>(null);
 
   const hasVariants = product.variants.length > 0;
 
-  // pick the first in-stock variant OR fallback to first available
   const defaultVariant = hasVariants
     ? product.variants.find((v) => v.stock > 0) || product.variants[0]
     : undefined;
@@ -36,28 +34,11 @@ const AddToCart = ({ product, outOfStock }: AddToCartProps) => {
     VariantInput | undefined
   >(defaultVariant);
 
-  useEffect(() => {
-    let ignore = false;
-
-    const fetchCart = async () => {
-      try {
-        const updatedCart = await getMyCart();
-        if (!ignore) setCart(updatedCart);
-      } catch (err) {
-        if (!ignore) console.error(err);
-      }
-    };
-
-    fetchCart();
-
-    return () => {
-      ignore = true;
-    };
-  }, []);
+  if (!cart) return <Loader />;
 
   const item: CartItem = {
     productId: product.id,
-    variantId: hasVariants ? (selectedVariant?.sku ?? undefined) : undefined,
+    variantId: hasVariants ? selectedVariant?.sku : undefined,
     name: product.name,
     slug: product.slug,
     price: hasVariants
@@ -71,64 +52,47 @@ const AddToCart = ({ product, outOfStock }: AddToCartProps) => {
     qty: 1,
   };
 
-  // Early return while loading
-  if (!cart) return <Loader />;
+  const existItem = cart.items.find((x) =>
+    hasVariants
+      ? x.productId === item.productId && x.variantId === item.variantId
+      : x.productId === item.productId,
+  );
 
-  // Handle add from cart
   const handleAddToCart = async () => {
     setActionType('add');
-    startTransition(async () => {
-      const res = await addItemToCart(item!);
+    setLoading(true);
 
-      if (!res?.success) {
-        toast.error(res.message);
-        return;
-      }
+    const res = await addItemToCart(item);
+    setLoading(false);
 
-      setCart(res.cart);
+    if (!res.success) return toast.error(res.message);
+    if (res.cart) setCart(res.cart);
 
-      // Handle success add to cart
-      toast.success(res.message, {
-        action: (
-          <Button
-            className="bg-primary cursor-pointer text-white hover:bg-gray-800"
-            onClick={() => router.push('/cart')}
-          >
-            Go To Cart
-          </Button>
-        ),
-      });
+    toast.success(res.message, {
+      action: (
+        <Button
+          className="bg-primary cursor-pointer text-white hover:bg-gray-800"
+          onClick={() => router.push('/cart')}
+        >
+          Go To Cart
+        </Button>
+      ),
     });
   };
 
-  // Handle remove from cart
   const handleRemoveFromCart = async () => {
     setActionType('remove');
-    startTransition(async () => {
-      const res = await removeItemFromCart(
-        item.productId,
-        item.variantId ?? '',
-      );
+    setLoading(true);
 
-      if (!res?.success) {
-        toast.error(res.message);
-        return;
-      }
+    const res = await removeItemFromCart(item.productId, item.variantId ?? '');
 
-      setCart(res.cart);
+    setLoading(false);
 
-      toast.success(res.message);
-    });
+    if (!res.success) return toast.error(res.message);
+    if (res.cart) setCart(res.cart);
+
+    toast.success(res.message);
   };
-
-  // Check if item is in cart
-  const existItem =
-    cart &&
-    cart.items.find((x) =>
-      hasVariants
-        ? x.productId === item?.productId && x.variantId === item.variantId
-        : x.productId === item?.productId,
-    );
 
   return (
     <div>
@@ -139,19 +103,18 @@ const AddToCart = ({ product, outOfStock }: AddToCartProps) => {
           onSelectVariant={setSelectedVariant}
         />
       )}
+
       <div className="mt-7">
         {existItem ? (
           <div className="flex items-center gap-2">
             <Button
               type="button"
               variant="outline"
-              className="cursor-pointer"
               onClick={handleRemoveFromCart}
-              disabled={isPending}
-              aria-disabled={isPending}
+              disabled={loading}
             >
               <LoadingIcon
-                pending={isPending && actionType === 'remove'}
+                pending={loading && actionType === 'remove'}
                 Icon={Minus}
               />
             </Button>
@@ -161,13 +124,11 @@ const AddToCart = ({ product, outOfStock }: AddToCartProps) => {
             <Button
               type="button"
               variant="outline"
-              className="cursor-pointer"
               onClick={handleAddToCart}
-              disabled={isPending}
-              aria-disabled={isPending}
+              disabled={loading}
             >
               <LoadingIcon
-                pending={isPending && actionType === 'add'}
+                pending={loading && actionType === 'add'}
                 Icon={Plus}
               />
             </Button>
@@ -177,11 +138,10 @@ const AddToCart = ({ product, outOfStock }: AddToCartProps) => {
             type="button"
             className="w-full cursor-pointer"
             onClick={handleAddToCart}
-            disabled={outOfStock || isPending}
-            aria-disabled={outOfStock || isPending}
+            disabled={outOfStock || loading}
           >
             <LoadingIcon
-              pending={isPending && actionType === 'add'}
+              pending={loading && actionType === 'add'}
               Icon={Plus}
             />
             Add To Cart
