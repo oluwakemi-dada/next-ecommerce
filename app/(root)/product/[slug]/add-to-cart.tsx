@@ -12,6 +12,7 @@ import {
 } from '@/lib/actions/cart.actions';
 import { Cart, CartItem, Product, VariantInput } from '@/types';
 import ProductSelector from './product-selector';
+import Loader from '@/components/shared/loader';
 
 type AddToCartProps = {
   product: Product;
@@ -24,9 +25,12 @@ const AddToCart = ({ product, outOfStock }: AddToCartProps) => {
   const [isPending, startTransition] = useTransition();
   const [actionType, setActionType] = useState<'add' | 'remove' | null>(null);
 
+  const hasVariants = product.variants.length > 0;
+
   // pick the first in-stock variant OR fallback to first available
-  const defaultVariant =
-    product.variants.find((v) => v.stock > 0) || product.variants[0];
+  const defaultVariant = hasVariants
+    ? product.variants.find((v) => v.stock > 0) || product.variants[0]
+    : undefined;
 
   const [selectedVariant, setSelectedVariant] = useState<
     VariantInput | undefined
@@ -51,22 +55,24 @@ const AddToCart = ({ product, outOfStock }: AddToCartProps) => {
     };
   }, []);
 
-  if (!selectedVariant) return;
-
-  const item: CartItem | undefined = selectedVariant && {
+  const item: CartItem = {
     productId: product.id,
-    variantId: selectedVariant.sku,
+    variantId: hasVariants ? (selectedVariant?.sku ?? undefined) : undefined,
     name: product.name,
     slug: product.slug,
-    price: selectedVariant.price ?? '',
-    image: selectedVariant.image ?? '',
-    size: selectedVariant.size ?? undefined,
-    color: selectedVariant.color ?? undefined,
+    price: hasVariants
+      ? (selectedVariant?.price ?? product.price)
+      : product.price,
+    image: hasVariants
+      ? (selectedVariant?.image ?? product.images[0])
+      : product.images[0],
+    size: hasVariants ? (selectedVariant?.size ?? undefined) : undefined,
+    color: hasVariants ? (selectedVariant?.color ?? undefined) : undefined,
     qty: 1,
   };
 
   // Early return while loading
-  // if (!cart) return <Loader />;
+  if (!cart) return <Loader />;
 
   // Handle add from cart
   const handleAddToCart = async () => {
@@ -99,7 +105,10 @@ const AddToCart = ({ product, outOfStock }: AddToCartProps) => {
   const handleRemoveFromCart = async () => {
     setActionType('remove');
     startTransition(async () => {
-      const res = await removeItemFromCart(item.productId, item.variantId!);
+      const res = await removeItemFromCart(
+        item.productId,
+        item.variantId ?? '',
+      );
 
       if (!res?.success) {
         toast.error(res.message);
@@ -115,18 +124,22 @@ const AddToCart = ({ product, outOfStock }: AddToCartProps) => {
   // Check if item is in cart
   const existItem =
     cart &&
-    cart.items.find(
-      (x) => x.productId === item.productId && x.variantId === item.variantId,
+    cart.items.find((x) =>
+      hasVariants
+        ? x.productId === item?.productId && x.variantId === item.variantId
+        : x.productId === item?.productId,
     );
 
   return (
     <div>
-      <ProductSelector
-        variants={product.variants}
-        selectedVariant={selectedVariant}
-        onSelectVariant={setSelectedVariant}
-      />
-      <div className='mt-7'>
+      {hasVariants && (
+        <ProductSelector
+          variants={product.variants}
+          selectedVariant={selectedVariant}
+          onSelectVariant={setSelectedVariant}
+        />
+      )}
+      <div className="mt-7">
         {existItem ? (
           <div className="flex items-center gap-2">
             <Button

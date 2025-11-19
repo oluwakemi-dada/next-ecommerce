@@ -27,17 +27,27 @@ const main = async () => {
 
     if (variants && variants.length > 0) {
       await prisma.productVariant.createMany({
-        data: variants.map((v) => ({
-          ...v,
-          productId: createdProduct.id,
-          price: v.price ?? productData.price,
-          stock: v.stock ?? 0,
-        })),
+        data: variants.map((v, index) => {
+          const namePart = productData.name
+            .replace(/\s+/g, '')
+            .substring(0, 3)
+            .toUpperCase();
+          const colorPart = v.color ? `${v.color.toUpperCase()}` : '';
+          const sizePart = v.size ? `${v.size.toUpperCase()}` : '';
+
+          return {
+            ...v,
+            productId: createdProduct.id,
+            sku: `${namePart}-${colorPart}-${sizePart}-${createdProduct.id}-${index}`,
+            price: v.price ?? productData.price,
+            stock: v.stock ?? 0,
+          };
+        }),
       });
     }
   }
 
-  console.log('Database seeded successfully ✅');
+  console.log('Database seeded successfully');
 };
 
 main()

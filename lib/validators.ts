@@ -33,6 +33,7 @@ export const insertProductSchema = z.object({
   banner: z.string().nullable().optional(),
   isFeatured: z.boolean().default(false),
   price: currency,
+  stock: z.number().int().min(0).nullable().optional(),
   variants: z.array(variantSchema).optional().default([]),
 });
 
@@ -69,7 +70,6 @@ export const cartItemSchema = z.object({
   size: z.string().optional(),
   color: z.string().optional(),
 });
-
 
 export const insertCartSchema = z.object({
   items: z.array(cartItemSchema),

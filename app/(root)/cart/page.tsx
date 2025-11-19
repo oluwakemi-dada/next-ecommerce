@@ -1,6 +1,4 @@
-import { Suspense } from 'react';
-import CartTableWrapper from './cart-table-wrapper';
-import Loader from '@/components/shared/loader';
+import CartTable from './cart-table';
 
 export const metadata = {
   title: 'Shopping Cart',
@@ -9,9 +7,7 @@ export const metadata = {
 const CartPage = () => {
   return (
     <>
-      <Suspense fallback={<Loader />}>
-        <CartTableWrapper />
-      </Suspense>
+      <CartTable />
     </>
   );
 };

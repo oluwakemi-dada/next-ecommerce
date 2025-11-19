@@ -1,19 +1,24 @@
-import { useState, useTransition } from 'react';
+'use client';
+import { useEffect, useState, useTransition } from 'react';
 import { toast } from 'sonner';
 import { Minus, Plus } from 'lucide-react';
 import Link from 'next/link';
-import { TableRow, TableCell } from '@/components/ui/table';
 import LoadingIcon from '@/components/shared/loading-icon';
 import Image from 'next/image';
-import { addItemToCart, removeItemFromCart } from '@/lib/actions/cart.actions';
+import {
+  addItemToCart,
+  getMyCart,
+  removeItemFromCart,
+} from '@/lib/actions/cart.actions';
 import { Button } from '@/components/ui/button';
-import { CartItem } from '@/types';
+import { Cart, CartItem } from '@/types';
 
 type CartTableRowProps = {
   item: CartItem;
+  setCart: (newcart: Cart) => void;
 };
 
-const CartTableRow = ({ item }: CartTableRowProps) => {
+const CartTableRow = ({ item, setCart }: CartTableRowProps) => {
   const [isPending, startTransition] = useTransition();
   const [actionType, setActionType] = useState<'add' | 'remove' | null>(null);
 
@@ -40,12 +45,19 @@ const CartTableRow = ({ item }: CartTableRowProps) => {
                 startTransition(async () => {
                   const res = await removeItemFromCart(
                     item.productId,
-                    item.variantId,
+                    item.variantId ?? '',
                   );
 
                   if (!res.success) {
                     toast.error(res.message);
+                    return;
                   }
+
+                  if (res.cart) {
+                    setCart(res.cart); 
+                  }
+
+                  toast.success(res.message);
                 });
               }}
               aria-disabled={isPending}
@@ -68,7 +80,15 @@ const CartTableRow = ({ item }: CartTableRowProps) => {
 
                   if (!res.success) {
                     toast.error(res.message);
+                    return;
                   }
+
+                  if (res.cart) {
+                    setCart(res.cart);
+                  }
+
+                  // Handle success add to cart
+                  toast.success(res.message);
                 });
               }}
               aria-disabled={isPending}

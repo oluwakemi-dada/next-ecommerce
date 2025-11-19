@@ -67,18 +67,43 @@ export const addItemToCart = async (data: CartItem) => {
     // Parse and validate item
     const item = cartItemSchema.parse(data);
 
-    // Fetch the variant instead of just the product
-    const variant = await prisma.productVariant.findFirst({
-      where: {
-        productId: item.productId,
-        size: item.size ?? null,
-        color: item.color ?? null,
-        isActive: true,
-      },
-    });
+    // Determine if product has variants
+    const hasVariants = !!item.variantId;
+    let variant;
+    let product;
+    let itemName: string;
+    let availableStock: number;
 
-    if (!variant) throw new Error('Product variant not found');
-    if (variant.stock < 1) throw new Error('Variant is out of stock');
+    if (hasVariants) {
+      // Fetch the variant instead of just the product
+      variant = await prisma.productVariant.findFirst({
+        where: {
+          productId: item.productId,
+          size: item.size ?? null,
+          color: item.color ?? null,
+          isActive: true,
+        },
+      });
+      if (!variant) throw new Error('Product variant not found');
+      if (variant.stock < 1) throw new Error('Variant is out of stock');
+
+      itemName = variant.sku;
+      availableStock = variant.stock;
+    } else {
+      // No variant — fetch the product itself
+      product = await prisma.product.findUnique({
+        where: { id: item.productId },
+      });
+      if (!product) throw new Error('Product not found');
+      if ((product.stock ?? 0) < 1) throw new Error('Product is out of stock');
+
+      itemName = product.name;
+      availableStock = product.stock ?? 0;
+    }
+
+    const productIdForRevalidation = hasVariants
+      ? variant!.productId
+      : product!.id;
 
     if (!cart) {
       // Create new cart object
@@ -95,14 +120,13 @@ export const addItemToCart = async (data: CartItem) => {
       });
 
       // Revalidate product page
-      revalidatePath(`/product/${variant.productId}`);
-
+      revalidatePath(`/product/${productIdForRevalidation}`);
       return {
         success: true,
-        message: `${variant.sku} added to cart`,
+        message: `${itemName} added to cart`,
       };
     } else {
-      // Check if same variant exists in cart
+      // Check if same item exists in cart (variant or product)
       const existItem = (cart.items as CartItem[]).find(
         (x) =>
           x.productId === item.productId &&
@@ -111,9 +135,8 @@ export const addItemToCart = async (data: CartItem) => {
       );
 
       if (existItem) {
-        if (variant.stock < existItem.qty + 1)
+        if (availableStock < existItem.qty + 1)
           throw new Error('Not enough stock');
-
         existItem.qty += 1;
       } else {
         cart.items.push(item);
@@ -124,12 +147,11 @@ export const addItemToCart = async (data: CartItem) => {
         data: { items: cart.items, ...calcPrice(cart.items as CartItem[]) },
       });
 
-      revalidatePath(`/product/${variant.productId}`);
-
+      revalidatePath(`/product/${productIdForRevalidation}`);
       const updatedCart = await getMyCart();
       return {
         success: true,
-        message: `${variant.sku} ${existItem ? 'updated in' : 'added to'} cart`,
+        message: `${itemName} ${existItem ? 'updated in' : 'added to'} cart`,
         cart: updatedCart,
       };
     }
@@ -154,18 +176,29 @@ export const removeItemFromCart = async (
     const cart = await getMyCart();
     if (!cart) throw new Error('Cart not found');
 
-    // Check for Item
-    const exist = (cart.items as CartItem[]).find(
-      (x) => x.productId === productId && x.variantId === variantId,
-    );
+    // Normalize variantId (treat empty string as null/undefined for comparison)
+    const normalizedVariantId =
+      variantId && variantId.trim() !== '' ? variantId : null;
+
+    // Check for Item - handle both variant and non-variant products
+    const exist = (cart.items as CartItem[]).find((x) => {
+      const itemVariantId =
+        x.variantId && x.variantId.trim() !== '' ? x.variantId : null;
+      return x.productId === productId && itemVariantId === normalizedVariantId;
+    });
+
     if (!exist) throw new Error('Item not found');
 
     // Check if only one in qty
     if (exist.qty === 1) {
       // Remove from the cart
-      cart.items = (cart.items as CartItem[]).filter(
-        (x) => !(x.productId === productId && x.variantId === variantId),
-      );
+      cart.items = (cart.items as CartItem[]).filter((x) => {
+        const itemVariantId =
+          x.variantId && x.variantId.trim() !== '' ? x.variantId : null;
+        return !(
+          x.productId === productId && itemVariantId === normalizedVariantId
+        );
+      });
     } else {
       // Decrease the qty
       exist.qty = exist.qty - 1;
@@ -182,7 +215,6 @@ export const removeItemFromCart = async (
 
     // Fetch and return the updated cart
     const updatedCart = await getMyCart();
-
     return {
       success: true,
       message: `Item removed from cart`,

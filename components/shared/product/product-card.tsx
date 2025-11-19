@@ -9,6 +9,8 @@ type ProductCardProps = {
 };
 
 const ProductCard = ({ product }: ProductCardProps) => {
+const inStock = product.variants.length > 0 ? product.variants.some((variant) => variant.stock > 0) : !!product.stock && product.stock > 0
+
   return (
     <Card className="w-full max-w-sm">
       <CardHeader className="items-center p-0">
@@ -29,7 +31,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
         </Link>
         <div className="flex-between gap-4">
           <p>{product.rating} Stars</p>
-          {product.variants.some((variant) => variant.stock > 0) ? (
+          {inStock ? (
             <ProductPrice value={Number(product.price)} />
           ) : (
             <p className="text-destructive">Out Of Stock</p>

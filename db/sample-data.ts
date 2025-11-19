@@ -71,29 +71,13 @@ const sampleData = {
         '/images/sample-products/p2-2.jpg',
       ],
       price: 85.9,
+      stock: 0,
       brand: 'Brooks Brothers',
       rating: 4.2,
       numReviews: 8,
       isFeatured: true,
       banner: 'banner-2.jpg',
-      variants: [
-        ...['M', 'L', 'XL'].map((size) => ({
-          color: 'Blue',
-          size,
-          stock: defaultStock,
-          sku: `BBL-BLU-${size}`,
-          price: 85.9,
-          image: '/images/sample-products/p2-1.jpg',
-        })),
-        ...['S', 'M', 'L'].map((size) => ({
-          color: 'Gray',
-          size,
-          stock: defaultStock,
-          sku: `BBL-GRY-${size}`,
-          price: size === 'L' ? 90.0 : 85.9, // L gray is slightly more
-          image: '/images/sample-products/p2-2.jpg',
-        })),
-      ],
+      variants: [],
     },
 
     // ==========================================
@@ -116,7 +100,7 @@ const sampleData = {
       banner: null,
       variants: [
         ...['M', 'L', 'XL'].map((size) => ({
-          color: 'White',
+          color: null,
           size,
           stock: defaultStock,
           sku: `THC-WHT-${size}`,
@@ -139,6 +123,7 @@ const sampleData = {
         '/images/sample-products/p4-2.jpg',
       ],
       price: 39.95,
+      stock: 20,
       brand: 'Calvin Klein',
       rating: 3.6,
       numReviews: 5,
@@ -168,7 +153,7 @@ const sampleData = {
       variants: [
         {
           color: 'Blue',
-          size: 'M',
+          size: null,
           stock: defaultStock,
           sku: 'PRL-BLU-M',
           price: 79.99,
@@ -176,7 +161,7 @@ const sampleData = {
         },
         {
           color: 'Pink',
-          size: 'M',
+          size: null,
           stock: defaultStock,
           sku: 'PRL-PNK-M',
           price: 84.99,
@@ -206,6 +191,14 @@ const sampleData = {
       variants: [
         ...['S', 'M', 'L', 'XL', '2XL'].map((size) => ({
           color: 'Pink',
+          size,
+          stock: defaultStock,
+          sku: `PHD-PNK-${size}`,
+          price: size === '2XL' ? 104.99 : 99.99, // 2XL premium
+          image: '/images/sample-products/p6-1.jpg',
+        })),
+        ...['S', '2XL'].map((size) => ({
+          color: 'Red',
           size,
           stock: defaultStock,
           sku: `PHD-PNK-${size}`,

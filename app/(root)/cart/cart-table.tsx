@@ -1,12 +1,5 @@
 'use client';
-import { useTransition } from 'react';
-import {
-  Table,
-  TableBody,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import { useEffect, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
@@ -16,14 +9,34 @@ import CartTableRow from './cart-table-row';
 import { Button } from '@/components/ui/button';
 import LoadingIcon from '@/components/shared/loading-icon';
 import { ArrowRight } from 'lucide-react';
+import { getMyCart } from '@/lib/actions/cart.actions';
+import Loader from '@/components/shared/loader';
 
-type CartTableProps = {
-  cart?: Cart;
-};
-
-const CartTable = ({ cart }: CartTableProps) => {
+const CartTable = () => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const [cart, setCart] = useState<Cart | undefined>(undefined);
+
+  useEffect(() => {
+    let ignore = false;
+
+    const fetchCart = async () => {
+      try {
+        const updatedCart = await getMyCart();
+        if (!ignore) setCart(updatedCart);
+      } catch (err) {
+        if (!ignore) console.error(err);
+      }
+    };
+
+    fetchCart();
+
+    return () => {
+      ignore = true;
+    };
+  }, []);
+
+  if (!cart) return <Loader />;
 
   return (
     <>
@@ -36,7 +49,11 @@ const CartTable = ({ cart }: CartTableProps) => {
         <div className="grid gap-10 md:grid-cols-3 md:gap-5 lg:gap-10">
           <div className="divide-border flex flex-col divide-y overflow-x-auto md:col-span-2">
             {cart.items.map((item) => (
-              <CartTableRow item={item} key={item.variantId} />
+              <CartTableRow
+                item={item}
+                key={item.variantId ? item.variantId : item.productId}
+                setCart={(newCart) => setCart(newCart)}
+              />
             ))}
           </div>
 

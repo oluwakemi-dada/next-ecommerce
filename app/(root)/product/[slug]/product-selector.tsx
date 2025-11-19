@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import clsx from 'clsx';
 import { Button } from '@/components/ui/button';
 import { VariantInput } from '@/types';
@@ -18,27 +18,69 @@ const ProductSelector = ({
   // Only consider in-stock variants
   const availableVariants = variants.filter((v) => v.stock > 0);
 
-  // Determine if we have color and size options
+  // Detect if product has color/size
   const hasColors = availableVariants.some((v) => v.color);
   const hasSizes = availableVariants.some((v) => v.size);
 
-  // Unique colors and sizes
-  const colors = hasColors
-    ? Array.from(new Set(availableVariants.map((v) => v.color).filter(Boolean)))
-    : [];
-  const sizes = hasSizes
-    ? Array.from(new Set(availableVariants.map((v) => v.size).filter(Boolean)))
-    : [];
+  // Unique available colors
+  const allColors = useMemo(() => {
+    return hasColors
+      ? Array.from(
+          new Set(availableVariants.map((v) => v.color).filter(Boolean)),
+        )
+      : [];
+  }, [availableVariants, hasColors]);
 
-  // Local state for currently selected options
+  // Unique available sizes
+  const allSizes = useMemo(() => {
+    return hasSizes
+      ? Array.from(
+          new Set(availableVariants.map((v) => v.size).filter(Boolean)),
+        )
+      : [];
+  }, [availableVariants, hasSizes]);
+
+  // Selected state
   const [selectedColor, setSelectedColor] = useState<string | undefined>(
-    initialSelectedVariant?.color ?? colors[0] ?? undefined,
+    initialSelectedVariant?.color ?? allColors[0] ?? undefined,
   );
   const [selectedSize, setSelectedSize] = useState<string | undefined>(
-    initialSelectedVariant?.size ?? sizes[0] ?? undefined,
+    initialSelectedVariant?.size ?? allSizes[0] ?? undefined,
   );
 
-  // Update selected variant whenever color/size changes
+  // Sizes valid for selected color
+  const filteredSizes = useMemo(() => {
+    if (!hasSizes) return [];
+
+    if (!hasColors || !selectedColor) return allSizes;
+
+    return Array.from(
+      new Set(
+        availableVariants
+          .filter((v) => v.color === selectedColor)
+          .map((v) => v.size)
+          .filter(Boolean),
+      ),
+    );
+  }, [availableVariants, selectedColor, hasColors, hasSizes, allSizes]);
+
+  // Colors valid for selected size
+  const filteredColors = useMemo(() => {
+    if (!hasColors) return [];
+
+    if (!hasSizes || !selectedSize) return allColors;
+
+    return Array.from(
+      new Set(
+        availableVariants
+          .filter((v) => v.size === selectedSize)
+          .map((v) => v.color)
+          .filter(Boolean),
+      ),
+    );
+  }, [availableVariants, selectedSize, hasColors, hasSizes, allColors]);
+
+  // Auto-select valid combination
   useEffect(() => {
     const variant =
       availableVariants.find(
@@ -61,16 +103,14 @@ const ProductSelector = ({
     <div className="space-y-7">
       {/* Size Selector */}
       {hasSizes && (
-        <div className="">
+        <div>
           <div className="mb-3 font-medium">Available Sizes</div>
           <div className="flex gap-3">
-            {sizes.map((size) => (
+            {filteredSizes.map((size) => (
               <Button
                 key={size}
                 variant={size === selectedSize ? 'default' : 'outline'}
-                size='default'
                 onClick={() => setSelectedSize(size!)}
-                className='cursor-pointer'
               >
                 {size}
               </Button>
@@ -84,21 +124,24 @@ const ProductSelector = ({
         <div>
           <div className="mb-3 font-medium">Available Color</div>
           <div className="flex gap-3">
-            {colors.map((color) => (
-              <Button
-                key={color}
-                variant={color === selectedColor ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setSelectedColor(color!)}
-                style={{ backgroundColor: color! }}
-                className={clsx(
-                  'h-8 w-8 cursor-pointer rounded-full border',
-                  selectedColor === color
-                    ? 'ring-accent-foreground border-transparent ring-1 ring-offset-1'
-                    : 'border-muted',
-                )}
-              ></Button>
-            ))}
+            {filteredColors.map((color) => {
+              const isSelected = selectedColor === color;
+
+              return (
+                <Button
+                  key={color}
+                  variant={color === selectedColor ? 'default' : 'outline'}
+                  onClick={() => setSelectedColor(color!)}
+                  style={{ backgroundColor: color! }}
+                  className={clsx(
+                    'h-7 w-7 cursor-pointer rounded-full border transition',
+                    isSelected
+                      ? 'ring-accent-foreground scale-110 border-transparent ring-1 ring-offset-1'
+                      : 'border-muted',
+                  )}
+                ></Button>
+              );
+            })}
           </div>
         </div>
       )}

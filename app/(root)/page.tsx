@@ -9,7 +9,7 @@ const HomePage = () => {
   return (
     <>
       <Suspense fallback={<Loader />}>
-        <ProductList title="Newest Arrivals" limit={4} />
+        <ProductList title="Newest Arrivals" limit={6} />
       </Suspense>
     </>
   );
