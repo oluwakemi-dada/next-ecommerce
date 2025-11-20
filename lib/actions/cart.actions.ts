@@ -185,57 +185,6 @@ export const addItemToCart = async (data: CartItem) => {
       message: `${itemName} ${existItem ? 'updated in' : 'added to'} cart`,
       cart: updatedCart,
     };
-
-    // if (!cart.id) {
-    //   // Create new cart object
-    //   const newCart = insertCartSchema.parse({
-    //     userId: userId,
-    //     items: [item],
-    //     sessionCartId: sessionCartId,
-    //     ...calcPrice([item]),
-    //   });
-
-    //   // Add to database
-    //   await prisma.cart.create({
-    //     data: newCart,
-    //   });
-
-    //   // Revalidate product page
-    //   revalidatePath(`/product/${productIdForRevalidation}`);
-    //   return {
-    //     success: true,
-    //     message: `${itemName} added to cart`,
-    //   };
-    // } else {
-    //   // Check if same item exists in cart (variant or product)
-    //   const existItem = (cart.items as CartItem[]).find(
-    //     (x) =>
-    //       x.productId === item.productId &&
-    //       x.size === item.size &&
-    //       x.color === item.color,
-    //   );
-
-    //   if (existItem) {
-    //     if (availableStock < existItem.qty + 1)
-    //       throw new Error('Not enough stock');
-    //     existItem.qty += 1;
-    //   } else {
-    //     (cart.items as CartItem[]).push(item);
-    //   }
-
-    //   await prisma.cart.update({
-    //     where: { id: cart.id },
-    //     data: { items: cart.items, ...calcPrice(cart.items as CartItem[]) },
-    //   });
-
-    //   revalidatePath(`/product/${productIdForRevalidation}`);
-    //   const updatedCart = await getMyCart();
-    //   return {
-    //     success: true,
-    //     message: `${itemName} ${existItem ? 'updated in' : 'added to'} cart`,
-    //     cart: updatedCart,
-    //   };
-    // }
   } catch (error) {
     return {
       success: false,
@@ -285,14 +234,16 @@ export const removeItemFromCart = async (
       exist.qty = exist.qty - 1;
     }
 
-    // Update cart in database
-    await prisma.cart.update({
-      where: { id: cart.id },
-      data: {
-        items: cart.items,
-        ...calcPrice(cart.items as CartItem[]),
-      },
-    });
+    if ('id' in cart && cart.id) {
+      // Update cart in database
+      await prisma.cart.update({
+        where: { id: cart.id },
+        data: {
+          items: cart.items,
+          ...calcPrice(cart.items as CartItem[]),
+        },
+      });
+    }
 
     // Fetch and return the updated cart
     const updatedCart = await getMyCart();
