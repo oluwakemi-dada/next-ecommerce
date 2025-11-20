@@ -19,7 +19,7 @@ type AddToCartProps = {
 
 const AddToCart = ({ product, outOfStock }: AddToCartProps) => {
   const router = useRouter();
-  const { cart, setCart } = useCart();
+  const { cart, setCart, cartLoading } = useCart();
 
   const [loading, setLoading] = useState(false);
   const [actionType, setActionType] = useState<'add' | 'remove' | null>(null);
@@ -33,8 +33,6 @@ const AddToCart = ({ product, outOfStock }: AddToCartProps) => {
   const [selectedVariant, setSelectedVariant] = useState<
     VariantInput | undefined
   >(defaultVariant);
-
-  if (!cart) return <Loader />;
 
   const item: CartItem = {
     productId: product.id,
@@ -52,46 +50,68 @@ const AddToCart = ({ product, outOfStock }: AddToCartProps) => {
     qty: 1,
   };
 
-  const existItem = cart.items.find((x) =>
-    hasVariants
-      ? x.productId === item.productId && x.variantId === item.variantId
-      : x.productId === item.productId,
-  );
+  const existItem =
+    cart &&
+    cart.items.find((x) =>
+      hasVariants
+        ? x.productId === item.productId && x.variantId === item.variantId
+        : x.productId === item.productId,
+    );
 
   const handleAddToCart = async () => {
     setActionType('add');
     setLoading(true);
 
-    const res = await addItemToCart(item);
-    setLoading(false);
+    try {
+      const res = await addItemToCart(item);
 
-    if (!res.success) return toast.error(res.message);
-    if (res.cart) setCart(res.cart);
+      if (!res.success) {
+        return toast.error(res.message);
+      }
 
-    toast.success(res.message, {
-      action: (
-        <Button
-          className="bg-primary cursor-pointer text-white hover:bg-gray-800"
-          onClick={() => router.push('/cart')}
-        >
-          Go To Cart
-        </Button>
-      ),
-    });
+      if (res.cart) setCart(res.cart);
+
+      toast.success(res.message, {
+        action: (
+          <Button
+            className="bg-primary cursor-pointer text-white hover:bg-gray-800"
+            onClick={() => router.push('/cart')}
+          >
+            Go To Cart
+          </Button>
+        ),
+      });
+    } catch (error) {
+      console.error('Add to cart failed:', error);
+      toast.error('Failed to add item to cart');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleRemoveFromCart = async () => {
     setActionType('remove');
     setLoading(true);
 
-    const res = await removeItemFromCart(item.productId, item.variantId ?? '');
+    try {
+      const res = await removeItemFromCart(
+        item.productId,
+        item.variantId ?? '',
+      );
 
-    setLoading(false);
+      if (!res.success) {
+        return toast.error(res.message);
+      }
 
-    if (!res.success) return toast.error(res.message);
-    if (res.cart) setCart(res.cart);
+      if (res.cart) setCart(res.cart);
 
-    toast.success(res.message);
+      toast.success(res.message);
+    } catch (error) {
+      console.error('Remove from cart failed:', error);
+      toast.error('Failed to remove item from cart');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -103,53 +123,56 @@ const AddToCart = ({ product, outOfStock }: AddToCartProps) => {
           onSelectVariant={setSelectedVariant}
         />
       )}
+      {cartLoading || !cart ? (
+        <Loader />
+      ) : (
+        <div className="mt-7">
+          {existItem ? (
+            <div className="flex items-center gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleRemoveFromCart}
+                disabled={loading}
+                className="cursor-pointer"
+              >
+                <LoadingIcon
+                  pending={loading && actionType === 'remove'}
+                  Icon={Minus}
+                />
+              </Button>
 
-      <div className="mt-7">
-        {existItem ? (
-          <div className="flex items-center gap-3">
+              <span className="px-2">{existItem.qty}</span>
+
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleAddToCart}
+                disabled={loading}
+                className="cursor-pointer"
+              >
+                <LoadingIcon
+                  pending={loading && actionType === 'add'}
+                  Icon={Plus}
+                />
+              </Button>
+            </div>
+          ) : (
             <Button
               type="button"
-              variant="outline"
-              onClick={handleRemoveFromCart}
-              disabled={loading}
-              className="cursor-pointer"
-            >
-              <LoadingIcon
-                pending={loading && actionType === 'remove'}
-                Icon={Minus}
-              />
-            </Button>
-
-            <span className="px-2">{existItem.qty}</span>
-
-            <Button
-              type="button"
-              variant="outline"
+              className="w-full cursor-pointer"
               onClick={handleAddToCart}
-              disabled={loading}
-              className="cursor-pointer"
+              disabled={outOfStock || loading}
             >
               <LoadingIcon
                 pending={loading && actionType === 'add'}
                 Icon={Plus}
               />
+              Add To Cart
             </Button>
-          </div>
-        ) : (
-          <Button
-            type="button"
-            className="w-full cursor-pointer"
-            onClick={handleAddToCart}
-            disabled={outOfStock || loading}
-          >
-            <LoadingIcon
-              pending={loading && actionType === 'add'}
-              Icon={Plus}
-            />
-            Add To Cart
-          </Button>
-        )}
-      </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

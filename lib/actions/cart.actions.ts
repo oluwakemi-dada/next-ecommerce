@@ -8,30 +8,60 @@ import { cartItemSchema, insertCartSchema } from '../validators';
 import { revalidatePath } from 'next/cache';
 
 export const getMyCart = async () => {
-  // Check for the cart cookie
-  const sessionCartId = (await cookies()).get('sessionCartId')?.value;
-  if (!sessionCartId) throw new Error('Cart session not found');
+  try {
+    // Check for the cart cookie
+    const sessionCartId = (await cookies()).get('sessionCartId')?.value;
+    if (!sessionCartId) throw new Error('Cart session not found');
 
-  // Get session and user ID
-  const session = await auth();
-  const userId = session?.user?.id ? (session.user.id as string) : undefined;
+    // Get session and user ID
+    const session = await auth();
+    const userId = session?.user?.id ? (session.user.id as string) : undefined;
 
-  // Get user cart from database
-  const cart = await prisma.cart.findFirst({
-    where: userId ? { userId: userId } : { sessionCartId: sessionCartId },
-  });
+    // Get user cart from database
+    let cart = await prisma.cart.findFirst({
+      where: userId ? { userId: userId } : { sessionCartId: sessionCartId },
+    });
 
-  if (!cart) return undefined;
+    if (!cart) {
+      cart = await prisma.cart.create({
+        data: {
+          sessionCartId,
+          userId,
+          items: [],
+          itemsPrice: 0,
+          totalPrice: 0,
+          shippingPrice: 0,
+          taxPrice: 0,
+        },
+      });
+    }
 
-  // Convert decimals and return
-  return convertToPlainObject({
-    ...cart,
-    items: cart.items as CartItem[],
-    itemsPrice: cart.itemsPrice.toString(),
-    totalPrice: cart.totalPrice.toString(),
-    shippingPrice: cart.shippingPrice.toString(),
-    taxPrice: cart.taxPrice.toString(),
-  });
+    // Convert decimals and return
+    return convertToPlainObject({
+      ...cart,
+      items: cart.items as CartItem[],
+      itemsPrice: cart.itemsPrice.toString(),
+      totalPrice: cart.totalPrice.toString(),
+      shippingPrice: cart.shippingPrice.toString(),
+      taxPrice: cart.taxPrice.toString(),
+    });
+  } catch (error) {
+    console.error('Error fetching cart:', error);
+
+    // Return empty cart on any error so client can render safely
+    const fallbackCartId = crypto.randomUUID();
+    return {
+      items: [],
+      itemsPrice: '0',
+      totalPrice: '0',
+      shippingPrice: '0',
+      taxPrice: '0',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      sessionCartId: fallbackCartId,
+      userId: undefined,
+    };
+  }
 };
 
 // Calculate cart prices

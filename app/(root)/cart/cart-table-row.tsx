@@ -20,28 +20,45 @@ const CartTableRow = ({ item }: CartTableRowProps) => {
 
   const handleRemove = async () => {
     setLoading('remove');
-    const res = await removeItemFromCart(item.productId, item.variantId ?? '');
 
-    if (!res.success) toast.error(res.message);
-    else if (res.cart) {
-      setCart(res.cart);
-      toast.success(res.message);
+    try {
+      const res = await removeItemFromCart(
+        item.productId,
+        item.variantId ?? '',
+      );
+
+      if (!res.success) {
+        toast.error(res.message);
+      } else if (res.cart) {
+        setCart(res.cart);
+        toast.success(res.message);
+      }
+    } catch (error) {
+      console.error('Remove from cart failed:', error);
+      toast.error('Failed to remove item from cart');
+    } finally {
+      setLoading(null);
     }
-
-    setLoading(null);
   };
 
   const handleAdd = async () => {
     setLoading('add');
-    const res = await addItemToCart(item);
 
-    if (!res.success) toast.error(res.message);
-    else if (res.cart) {
-      setCart(res.cart);
-      toast.success(res.message);
+    try {
+      const res = await addItemToCart(item);
+
+      if (!res.success) {
+        toast.error(res.message);
+      } else if (res.cart) {
+        setCart(res.cart);
+        toast.success(res.message);
+      }
+    } catch (error) {
+      console.error('Add to cart failed:', error);
+      toast.error('Failed to add item to cart');
+    } finally {
+      setLoading(null);
     }
-
-    setLoading(null);
   };
 
   return (

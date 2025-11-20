@@ -12,11 +12,11 @@ import Link from 'next/link';
 import Loader from '@/components/shared/loader';
 
 const CartTable = () => {
-  const { cart } = useCart();
+  const { cart, cartLoading } = useCart();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
-  if (!cart) return <Loader />;
+  if (cartLoading || !cart) return <Loader />;
 
   if (cart.items.length === 0)
     return (
