@@ -27,7 +27,7 @@ export const getMyCart = async () => {
         data: {
           sessionCartId,
           userId,
-          items: [],
+          items: [] as CartItem[],
           itemsPrice: 0,
           totalPrice: 0,
           shippingPrice: 0,
@@ -81,6 +81,7 @@ const calcPrice = (items: CartItem[]) => {
   };
 };
 
+// Add items to cart
 export const addItemToCart = async (data: CartItem) => {
   try {
     // Check for the cart cookie
@@ -99,6 +100,7 @@ export const addItemToCart = async (data: CartItem) => {
 
     // Determine if product has variants
     const hasVariants = !!item.variantId;
+    
     let variant;
     let product;
     let itemName: string;
