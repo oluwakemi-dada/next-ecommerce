@@ -10,14 +10,12 @@ export default function RootLayout({
 }>) {
   return (
     <SessionProvider>
-      <>
-        <CartInitializer />
-        <div className="flex h-screen flex-col">
-          <Header />
-          <main className="wrapper flex-1">{children}</main>
-          <Footer />
-        </div>
-      </>
+      <CartInitializer />
+      <div className="flex h-screen flex-col">
+        <Header />
+        <main className="wrapper flex-1">{children}</main>
+        <Footer />
+      </div>
     </SessionProvider>
   );
 }
