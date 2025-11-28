@@ -1,6 +1,7 @@
 import { SessionProvider } from 'next-auth/react';
 import Footer from '@/components/shared/footer';
 import Header from '@/components/shared/header';
+import CartInitializer from '@/components/shared/cart-initializer';
 
 export default function RootLayout({
   children,
@@ -9,11 +10,14 @@ export default function RootLayout({
 }>) {
   return (
     <SessionProvider>
-      <div className="flex h-screen flex-col">
-        <Header />
-        <main className="wrapper flex-1">{children}</main>
-        <Footer />
-      </div>
+      <>
+        <CartInitializer />
+        <div className="flex h-screen flex-col">
+          <Header />
+          <main className="wrapper flex-1">{children}</main>
+          <Footer />
+        </div>
+      </>
     </SessionProvider>
   );
 }

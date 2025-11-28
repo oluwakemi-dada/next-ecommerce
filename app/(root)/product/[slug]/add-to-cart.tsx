@@ -10,7 +10,7 @@ import { addItemToCart, removeItemFromCart } from '@/lib/actions/cart.actions';
 import { CartItem, Product, VariantInput } from '@/types';
 import ProductSelector from './product-selector';
 import Loader from '@/components/shared/loader';
-import { useCart } from '@/contexts/cart-context';
+import { useCartStore } from '@/store/cart-store';
 
 type AddToCartProps = {
   product: Product;
@@ -19,7 +19,11 @@ type AddToCartProps = {
 
 const AddToCart = ({ product, outOfStock }: AddToCartProps) => {
   const router = useRouter();
-  const { cart, setCart, cartLoading } = useCart();
+  
+  const cart = useCartStore((state) => state.cart);
+  const cartLoading = useCartStore((state) => state.cartLoading);
+  const setCart = useCartStore((state) => state.setCart);
+  const fetchCart = useCartStore((state) => state.fetchCart);
 
   const [loading, setLoading] = useState(false);
   const [actionType, setActionType] = useState<'add' | 'remove' | null>(null);
@@ -69,7 +73,12 @@ const AddToCart = ({ product, outOfStock }: AddToCartProps) => {
         return toast.error(res.message);
       }
 
-      if (res.cart) setCart(res.cart);
+      if (res.cart) {
+        setCart(res.cart);
+      } else {
+        // Fallback: refetch cart if server didn't return updated cart
+        await fetchCart();
+      }
 
       toast.success(res.message, {
         action: (
@@ -103,7 +112,12 @@ const AddToCart = ({ product, outOfStock }: AddToCartProps) => {
         return toast.error(res.message);
       }
 
-      if (res.cart) setCart(res.cart);
+      if (res.cart) {
+        setCart(res.cart);
+      } else {
+        // Fallback: refetch cart if server didn't return updated cart
+        await fetchCart();
+      }
 
       toast.success(res.message);
     } catch (error) {

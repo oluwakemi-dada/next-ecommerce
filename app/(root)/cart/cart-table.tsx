@@ -1,6 +1,5 @@
 'use client';
 import { useTransition } from 'react';
-import { useCart } from '@/contexts/cart-context';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { formatCurrency } from '@/lib/utils';
@@ -10,9 +9,11 @@ import { ArrowRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Loader from '@/components/shared/loader';
+import { useCartStore } from '@/store/cart-store';
 
 const CartTable = () => {
-  const { cart, cartLoading } = useCart();
+  const cart = useCartStore((state) => state.cart);
+  const cartLoading = useCartStore((state) => state.cartLoading);
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 

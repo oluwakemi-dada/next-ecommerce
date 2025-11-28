@@ -7,15 +7,15 @@ import Image from 'next/image';
 import LoadingIcon from '@/components/shared/loading-icon';
 import { Button } from '@/components/ui/button';
 import { addItemToCart, removeItemFromCart } from '@/lib/actions/cart.actions';
-import { useCart } from '@/contexts/cart-context';
 import { CartItem } from '@/types';
+import { useCartStore } from '@/store/cart-store';
 
 type CartTableRowProps = {
   item: CartItem;
 };
 
 const CartTableRow = ({ item }: CartTableRowProps) => {
-  const { setCart } = useCart();
+  const setCart = useCartStore((state) => state.setCart)
   const [loading, setLoading] = useState<null | 'add' | 'remove'>(null);
 
   const handleRemove = async () => {
