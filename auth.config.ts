@@ -21,7 +21,12 @@ export const authConfig = {
         });
 
         // Set newly generated sessionCartId in the response cookies
-        response.cookies.set('sessionCartId', sessionCartId);
+        response.cookies.set('sessionCartId', sessionCartId, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax',
+          maxAge: 60 * 60 * 24 * 30, // 30 days
+        });
 
         return response;
       }

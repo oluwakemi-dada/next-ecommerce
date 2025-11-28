@@ -11,6 +11,7 @@ import {
 } from '../validators';
 import { formatError } from '../utils';
 import { ShippingAddress } from '@/types';
+import { cookies } from 'next/headers';
 
 // Sign in the user with credentials
 export const signInWithCredentials = async (
@@ -107,6 +108,22 @@ export const getUserById = async (userId: string) => {
 
   return user;
 };
+
+export async function deleteSessionCartCookie() {
+  const cookiesObject = await cookies();
+
+  // Try explicit deletion with options
+  cookiesObject.set('sessionCartId', '', {
+    expires: new Date(0), // Set to past date
+    path: '/',
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+  });
+
+  // Also try the delete method
+  cookiesObject.delete('sessionCartId');
+}
 
 // Update the user's address
 export const updateUserAddress = async (data: ShippingAddress) => {

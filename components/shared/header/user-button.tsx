@@ -10,6 +10,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { deleteSessionCartCookie } from '@/lib/actions/user.actions';
 
 const UserButton = () => {
   const { data: session, status } = useSession();
@@ -32,7 +33,13 @@ const UserButton = () => {
   const handleSignOut = async () => {
     setLoading(true);
     try {
+      // Delete the sessionCartId cookie
+      await deleteSessionCartCookie();
+
       await signOut({ redirect: false });
+
+      // Force refresh
+      window.location.href = '/';
     } finally {
       setLoading(false);
     }

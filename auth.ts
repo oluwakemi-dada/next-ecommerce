@@ -5,6 +5,7 @@ import { cookies } from 'next/headers';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { prisma } from '@/db/prisma';
 import { authConfig } from './auth.config';
+import { CartItem } from './types';
 
 export const config = {
   pages: {
@@ -73,6 +74,7 @@ export const config = {
     jwt: async ({ token, user, trigger, session }: any) => {
       // Assign user fields to the token
       if (user) {
+        token.id = user.id;
         token.role = user.role;
 
         // If user has no name then use the email
@@ -85,9 +87,62 @@ export const config = {
             data: { name: token.name },
           });
         }
+
+        if (trigger === 'signIn' || trigger === 'signUp') {
+          const cookiesObject = await cookies();
+          const sessionCartId = cookiesObject.get('sessionCartId')?.value;
+
+          if (sessionCartId) {
+            const sessionCart = await prisma.cart.findFirst({
+              where: { sessionCartId },
+            });
+
+            if (sessionCart && sessionCart.userId === null) {
+              const sessionCartItems = (sessionCart.items as CartItem[]) || [];
+              const hasItems = sessionCartItems.length > 0;
+
+              if (hasItems) {
+                // Delete current user cart
+                await prisma.cart.deleteMany({
+                  where: { userId: user.id },
+                });
+
+                // Assign new cart
+                await prisma.cart.update({
+                  where: { id: sessionCart.id },
+                  data: { userId: user.id },
+                });
+              } else {
+                // Session cart is empty - check for existing user cart
+                const existingUserCart = await prisma.cart.findFirst({
+                  where: { userId: user.id },
+                });
+
+                if (existingUserCart) {
+                  // User has existing cart - delete empty session cart
+                  await prisma.cart.delete({
+                    where: { id: sessionCart.id },
+                  });
+                } else {
+                  // No existing cart - link the empty session cart
+                  await prisma.cart.update({
+                    where: { id: sessionCart.id },
+                    data: { userId: user.id },
+                  });
+                }
+              }
+            }
+          }
+        }
       }
 
       return token;
+    },
+  },
+  events: {
+    async signOut({ token }: any) {
+      const cookiesObject = await cookies();
+      cookiesObject.delete('sessionCartId');
     },
   },
 } satisfies NextAuthConfig;
