@@ -9,7 +9,7 @@ type CartState = {
   fetchCart: () => Promise<void>;
   updateCartOptimistically: (updater: (cart: Cart) => Cart) => void;
 };
-// <CartState>
+
 export const useCartStore = create<CartState>((set, get) => ({
   cart: undefined,
   cartLoading: true,
