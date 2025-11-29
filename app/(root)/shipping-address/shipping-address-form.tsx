@@ -175,7 +175,7 @@ const ShippingAddressForm = ({ address }: ShippingAddressFormProps) => {
               aria-disabled={isPending}
               className="cursor-pointer"
             >
-              <LoadingIcon pending={isPending} Icon={ArrowRight} />
+              <LoadingIcon pending={isPending} Icon={ArrowRight} /> Continue
             </Button>
           </div>
         </form>
