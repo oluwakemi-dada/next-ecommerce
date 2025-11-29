@@ -18,23 +18,11 @@ export const getMyCart = async () => {
     const userId = session?.user?.id ? (session.user.id as string) : undefined;
 
     // Get user cart from database
-    let cart = await prisma.cart.findFirst({
+    const cart = await prisma.cart.findFirst({
       where: userId ? { userId: userId } : { sessionCartId: sessionCartId },
     });
 
-    if (!cart) {
-      cart = await prisma.cart.create({
-        data: {
-          sessionCartId,
-          userId,
-          items: [] as CartItem[],
-          itemsPrice: 0,
-          totalPrice: 0,
-          shippingPrice: 0,
-          taxPrice: 0,
-        },
-      });
-    }
+    if (!cart) return undefined;
 
     // Convert decimals and return
     return convertToPlainObject({
@@ -47,20 +35,6 @@ export const getMyCart = async () => {
     });
   } catch (error) {
     console.error('Error fetching cart:', error);
-
-    // Return empty cart on any error so client can render safely
-    const fallbackCartId = crypto.randomUUID();
-    return {
-      items: [] as CartItem[],
-      itemsPrice: '0',
-      totalPrice: '0',
-      shippingPrice: '0',
-      taxPrice: '0',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      sessionCartId: fallbackCartId,
-      userId: undefined,
-    };
   }
 };
 
@@ -92,15 +66,12 @@ export const addItemToCart = async (data: CartItem) => {
     const session = await auth();
     const userId = session?.user?.id ? (session.user.id as string) : undefined;
 
-    // Get cart
-    const cart = await getMyCart();
-
     // Parse and validate item
     const item = cartItemSchema.parse(data);
 
     // Determine if product has variants
     const hasVariants = !!item.variantId;
-    
+
     let variant;
     let product;
     let itemName: string;
@@ -142,8 +113,21 @@ export const addItemToCart = async (data: CartItem) => {
       ? variant!.productId
       : product!.id;
 
+    // Get the cart (after validating product exists)
+    const cartData = await getMyCart();
+
+    // Initialize cart with proper type
+    const cart = cartData ?? {
+      items: [],
+      sessionCartId,
+      userId,
+    };
+
+    // Ensure items is always an array
+    const cartItems = (cart.items as CartItem[]) ?? [];
+
     // Check if item exists in cart
-    const existItem = cart.items.find(
+    const existItem = cartItems.find(
       (x) =>
         x.productId === item.productId &&
         x.size === item.size &&
@@ -155,8 +139,11 @@ export const addItemToCart = async (data: CartItem) => {
         throw new Error('Not enough stock');
       existItem.qty += 1;
     } else {
-      cart.items.push(item);
+      cartItems.push(item);
     }
+
+    // Update cart items reference
+    cart.items = cartItems;
 
     // Only update if the cart exists in DB
     if ('id' in cart && cart.id) {
@@ -261,3 +248,9 @@ export const removeItemFromCart = async (
     };
   }
 };
+
+// Clear cart
+// export async function clearAllCarts() {
+//   return await prisma.cart.deleteMany({});
+// }
+// await clearAllCarts();

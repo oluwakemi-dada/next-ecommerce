@@ -1,15 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus, Minus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import LoadingIcon from '@/components/shared/loading-icon';
-import { addItemToCart, removeItemFromCart } from '@/lib/actions/cart.actions';
+import { addItemToCart } from '@/lib/actions/cart.actions';
 import { CartItem, Product, VariantInput } from '@/types';
 import ProductSelector from './product-selector';
-import Loader from '@/components/shared/loader';
 import { useCartStore } from '@/store/cart-store';
 
 type AddToCartProps = {
@@ -19,14 +18,10 @@ type AddToCartProps = {
 
 const AddToCart = ({ product, outOfStock }: AddToCartProps) => {
   const router = useRouter();
-  
-  const cart = useCartStore((state) => state.cart);
-  const cartLoading = useCartStore((state) => state.cartLoading);
-  const setCart = useCartStore((state) => state.setCart);
-  const fetchCart = useCartStore((state) => state.fetchCart);
 
   const [loading, setLoading] = useState(false);
-  const [actionType, setActionType] = useState<'add' | 'remove' | null>(null);
+
+  const setCart = useCartStore((state) => state.setCart);
 
   const hasVariants = product.variants.length > 0;
 
@@ -54,16 +49,7 @@ const AddToCart = ({ product, outOfStock }: AddToCartProps) => {
     qty: 1,
   };
 
-  const existItem =
-    cart &&
-    cart.items.find((x) =>
-      hasVariants
-        ? x.productId === item.productId && x.variantId === item.variantId
-        : x.productId === item.productId,
-    );
-
   const handleAddToCart = async () => {
-    setActionType('add');
     setLoading(true);
 
     try {
@@ -75,9 +61,6 @@ const AddToCart = ({ product, outOfStock }: AddToCartProps) => {
 
       if (res.cart) {
         setCart(res.cart);
-      } else {
-        // Fallback: refetch cart if server didn't return updated cart
-        await fetchCart();
       }
 
       toast.success(res.message, {
@@ -98,36 +81,6 @@ const AddToCart = ({ product, outOfStock }: AddToCartProps) => {
     }
   };
 
-  const handleRemoveFromCart = async () => {
-    setActionType('remove');
-    setLoading(true);
-
-    try {
-      const res = await removeItemFromCart(
-        item.productId,
-        item.variantId ?? '',
-      );
-
-      if (!res.success) {
-        return toast.error(res.message);
-      }
-
-      if (res.cart) {
-        setCart(res.cart);
-      } else {
-        // Fallback: refetch cart if server didn't return updated cart
-        await fetchCart();
-      }
-
-      toast.success(res.message);
-    } catch (error) {
-      console.error('Remove from cart failed:', error);
-      toast.error('Failed to remove item from cart');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <div>
       {hasVariants && (
@@ -137,56 +90,18 @@ const AddToCart = ({ product, outOfStock }: AddToCartProps) => {
           onSelectVariant={setSelectedVariant}
         />
       )}
-      {cartLoading || !cart ? (
-        <Loader />
-      ) : (
-        <div className="mt-7">
-          {existItem ? (
-            <div className="flex items-center gap-3">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleRemoveFromCart}
-                disabled={loading}
-                className="cursor-pointer"
-              >
-                <LoadingIcon
-                  pending={loading && actionType === 'remove'}
-                  Icon={Minus}
-                />
-              </Button>
 
-              <span className="px-2">{existItem.qty}</span>
-
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleAddToCart}
-                disabled={loading}
-                className="cursor-pointer"
-              >
-                <LoadingIcon
-                  pending={loading && actionType === 'add'}
-                  Icon={Plus}
-                />
-              </Button>
-            </div>
-          ) : (
-            <Button
-              type="button"
-              className="w-full cursor-pointer"
-              onClick={handleAddToCart}
-              disabled={outOfStock || loading}
-            >
-              <LoadingIcon
-                pending={loading && actionType === 'add'}
-                Icon={Plus}
-              />
-              Add To Cart
-            </Button>
-          )}
-        </div>
-      )}
+      <div className="mt-7">
+        <Button
+          type="button"
+          className="w-full cursor-pointer"
+          onClick={handleAddToCart}
+          disabled={outOfStock || loading}
+        >
+          <LoadingIcon pending={loading} Icon={Plus} />
+          Add To Cart
+        </Button>
+      </div>
     </div>
   );
 };

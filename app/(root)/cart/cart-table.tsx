@@ -17,9 +17,9 @@ const CartTable = () => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
-  if (cartLoading || !cart) return <Loader />;
+  if (cartLoading) return <Loader />;
 
-  if (cart.items.length === 0)
+  if (!cart || cart.items.length === 0)
     return (
       <div>
         Cart is empty. <Link href="/">Go Shopping</Link>
