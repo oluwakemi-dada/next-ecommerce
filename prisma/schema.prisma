@@ -31,19 +31,18 @@ model Product {
 }
 
 model ProductVariant {
-  id         String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  productId  String      @db.Uuid
-  color      String?
-  size       String?
-  stock      Int         @default(0)
-  price      Decimal?    @db.Decimal(12, 2)
-  sku        String      @unique
-  image      String?
-  isActive   Boolean     @default(true)
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
-  product    Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
-  orderItems OrderItem[]
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  productId String   @db.Uuid
+  color     String?
+  size      String?
+  stock     Int      @default(0)
+  price     Decimal? @db.Decimal(12, 2)
+  sku       String   @unique
+  image     String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   // ensures no duplicate size/color combinations per product
   @@unique([productId, color, size], map: "unique_variant")
@@ -142,20 +141,19 @@ model Order {
 }
 
 model OrderItem {
-  id        String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  orderId   String          @db.Uuid
-  productId String          @db.Uuid
-  variantId String?         @db.Uuid
+  id        String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  orderId   String  @db.Uuid
+  productId String  @db.Uuid
+  variantId String?
   qty       Int
-  price     Decimal         @db.Decimal(12, 2)
+  price     Decimal @db.Decimal(12, 2)
   name      String
   slug      String
   image     String
   size      String?
   color     String?
-  order     Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  product   Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
-  variant   ProductVariant? @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@unique([orderId, productId, variantId])
   @@index([orderId])

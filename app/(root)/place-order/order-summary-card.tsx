@@ -1,6 +1,7 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { formatCurrency } from '@/lib/utils';
 import { Cart } from '@/types';
+import PlaceOrderForm from './place-order-form';
 
 type OrderSummaryProps = {
   cart: Cart;
@@ -25,6 +26,7 @@ const OrderSummaryCard = ({ cart }: OrderSummaryProps) => {
           <div>Total</div>
           <div>{formatCurrency(cart.totalPrice)}</div>
         </div>
+        <PlaceOrderForm />
       </CardContent>
     </Card>
   );

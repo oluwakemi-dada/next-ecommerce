@@ -5,7 +5,7 @@ import { Button } from '../ui/button';
 
 type SubmitButton = {
   children: ReactNode;
-  pendingLabel: string;
+  pendingLabel: ReactNode;
 };
 
 const SubmitButton = ({ children, pendingLabel }: SubmitButton) => {
