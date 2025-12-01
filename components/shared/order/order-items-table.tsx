@@ -9,13 +9,13 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Cart } from '@/types';
+import { Cart, OrderItem } from '@/types';
 
 type OrderItemsTableProps = {
-  cart: Cart;
+  items: Cart['items'] | OrderItem[];
 };
 
-const OrderItemsTable = ({ cart }: OrderItemsTableProps) => {
+const OrderItemsTable = ({ items }: OrderItemsTableProps) => {
   return (
     <Card className="py-0">
       <CardContent className="gap-4 p-4">
@@ -25,12 +25,12 @@ const OrderItemsTable = ({ cart }: OrderItemsTableProps) => {
             <TableRow>
               <TableHead>Item</TableHead>
               <TableHead>Qty</TableHead>
-              <TableHead>Price</TableHead>
+              <TableHead className="text-right">Price</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {cart.items.map((item) => (
-              <TableRow key={item.variantId ?? item.productId}>
+            {items.map((item) => (
+              <TableRow key={item.variantId || item.productId}>
                 <TableCell>
                   <Link
                     href={`/product/${item.slug}`}
