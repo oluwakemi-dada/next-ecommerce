@@ -15,13 +15,83 @@ export const prisma = new PrismaClient({ adapter }).$extends({
   result: {
     product: {
       price: {
+        needs: { price: true },
         compute(product) {
           return product.price.toString();
         },
       },
       rating: {
+        needs: { rating: true },
         compute(product) {
           return product.rating.toString();
+        },
+      },
+    },
+    productVariant: {
+      price: {
+        needs: { price: true },
+        compute(productVariant) {
+          return productVariant.price?.toString();
+        },
+      },
+    },
+    cart: {
+      itemsPrice: {
+        needs: { itemsPrice: true },
+        compute(cart) {
+          return cart.itemsPrice.toString();
+        },
+      },
+      shippingPrice: {
+        needs: { shippingPrice: true },
+        compute(cart) {
+          return cart.shippingPrice.toString();
+        },
+      },
+      taxPrice: {
+        needs: { taxPrice: true },
+        compute(cart) {
+          return cart.taxPrice.toString();
+        },
+      },
+      totalPrice: {
+        needs: { totalPrice: true },
+        compute(cart) {
+          return cart.totalPrice.toString();
+        },
+      },
+    },
+    order: {
+      itemsPrice: {
+        needs: { itemsPrice: true },
+        compute(cart) {
+          return cart.itemsPrice.toString();
+        },
+      },
+      shippingPrice: {
+        needs: { shippingPrice: true },
+        compute(cart) {
+          return cart.shippingPrice.toString();
+        },
+      },
+      taxPrice: {
+        needs: { taxPrice: true },
+        compute(cart) {
+          return cart.taxPrice.toString();
+        },
+      },
+      totalPrice: {
+        needs: { totalPrice: true },
+        compute(cart) {
+          return cart.totalPrice.toString();
+        },
+      },
+    },
+    orderItem: {
+      price: {
+        needs: { price: true },
+        compute(cart) {
+          return cart.price.toString();
         },
       },
     },

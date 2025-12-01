@@ -1,7 +1,8 @@
+import { Suspense } from 'react';
 import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
-import { getOrderById } from '@/lib/actions/order.actions';
-import { ShippingAddress } from '@/types';
+import Loader from '@/components/shared/loader';
+import { formatId } from '@/lib/utils';
+import OrderDetailsContent from './order-details-content';
 
 type OrderDetailsPage = {
   params: Promise<{
@@ -16,10 +17,14 @@ export const metadata: Metadata = {
 const OrderDetailsPage = async ({ params }: OrderDetailsPage) => {
   const { id } = await params;
 
-  const order = await getOrderById(id);
-  if (!order) notFound();
-
-  return <>Details {order.totalPrice}</>;
+  return (
+    <>
+      <h1 className="py-4 text-2xl">Order {formatId(id)}</h1>
+      <Suspense fallback={<Loader />}>
+        <OrderDetailsContent id={id} />
+      </Suspense>
+    </>
+  );
 };
 
 export default OrderDetailsPage;
