@@ -7,7 +7,7 @@ import OrderSummaryCard from '@/components/shared/order/order-summary-card';
 import { getUserById } from '@/lib/actions/user.actions';
 import { getMyCart } from '@/lib/actions/cart.actions';
 import { auth } from '@/auth';
-import { CartItem, ShippingAddress } from '@/types';
+import { ShippingAddress } from '@/types';
 import ShippingAddressCard from '../../../components/shared/order/shipping-address-card';
 import PaymentMethodCard from '../../../components/shared/order/payment-method-card';
 import OrderItemsTable from '../../../components/shared/order/order-items-table';
