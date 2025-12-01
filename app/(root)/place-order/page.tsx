@@ -48,7 +48,7 @@ const PlaceOrderPage = async () => {
           <PaymentMethodCard
             paymentMethod={user.paymentMethod}
             editable={true}
-            editHref="/profile/payment"
+            editHref="/payment-method"
           />
           <OrderItemsTable items={cart.items} />
         </div>

@@ -28,7 +28,7 @@ const ShippingAddressCard = ({
     <Card className="py-0">
       <CardContent className="gap-4 p-4">
         <h2 className="pb-4 text-xl">Shipping Address</h2>
-        <p>{address.fullName}</p>
+        <p className="mb-2">{address.fullName}</p>
         <p className="mb-2">
           {address.streetAddress}, {address.city} {address.postalCode},{' '}
           {address.country}
