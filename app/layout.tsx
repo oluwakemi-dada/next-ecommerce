@@ -1,7 +1,9 @@
+import { SessionProvider } from 'next-auth/react';
 import { ThemeProvider } from 'next-themes';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import '@/assets/styles/globals.css';
+import CartInitializer from '@/components/shared/cart-initializer';
 import { Toaster } from '@/components/ui/sonner';
 import { APP_NAME, APP_DESCRIPTION, SERVER_URL } from '@/lib/constants';
 
@@ -26,15 +28,18 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} antialiased`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-          <Toaster richColors />
-        </ThemeProvider>
+        <SessionProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <CartInitializer />
+            {children}
+            <Toaster richColors />
+          </ThemeProvider>
+        </SessionProvider>
       </body>
     </html>
   );
