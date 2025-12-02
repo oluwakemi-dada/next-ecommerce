@@ -22,7 +22,10 @@ const CartTable = () => {
   if (!cart || cart.items.length === 0)
     return (
       <div>
-        Cart is empty. <Link href="/">Go Shopping</Link>
+        Cart is empty.{' '}
+        <Link href="/" className="text-muted-foreground">
+          Go Shopping
+        </Link>
       </div>
     );
 
