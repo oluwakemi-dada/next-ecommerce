@@ -10,6 +10,21 @@ import { paypal } from '../paypal';
 import { getMyCart } from './cart.actions';
 import { getUserById } from './user.actions';
 
+// Get order by id
+export const getOrderById = async (orderId: string) => {
+  const data = await prisma.order.findFirst({
+    where: {
+      id: orderId,
+    },
+    include: {
+      orderitems: true,
+      user: { select: { name: true, email: true } },
+    },
+  });
+
+  return convertToPlainObject(data);
+};
+
 // Create order and create the order items
 export const createOrder = async () => {
   try {
@@ -109,21 +124,6 @@ export const createOrder = async () => {
   }
 };
 
-// Get order by id
-export const getOrderById = async (orderId: string) => {
-  const data = await prisma.order.findFirst({
-    where: {
-      id: orderId,
-    },
-    include: {
-      orderitems: true,
-      user: { select: { name: true, email: true } },
-    },
-  });
-
-  return convertToPlainObject(data);
-};
-
 // Create new paypal order
 export const createPayPalOrder = async (orderId: string) => {
   try {
@@ -159,6 +159,180 @@ export const createPayPalOrder = async (orderId: string) => {
     } else {
       throw new Error('Order not found');
     }
+  } catch (error) {
+    return {
+      success: false,
+      message: formatError(error),
+    };
+  }
+};
+
+// Update order to paid
+const updateOrderToPaid = async ({
+  orderId,
+  paymentResult,
+}: {
+  orderId: string;
+  paymentResult?: PaymentResult;
+}) => {
+  // Get order from the database
+  const order = await prisma.order.findFirst({
+    where: {
+      id: orderId,
+    },
+    include: {
+      orderitems: true,
+    },
+  });
+
+  if (!order) throw new Error('Order not found');
+
+  if (order.isPaid) throw new Error('Order is already paid');
+
+  // Transaction to update order and account  for product stock
+  await prisma.$transaction(async (tx) => {
+    // Iterate over products and update the stock
+    for (const item of order.orderitems) {
+      // Check if this order item has a variant
+      if (item.variantId) {
+        // Update the specific variant's stock
+        await tx.productVariant.update({
+          where: { id: item.variantId },
+          data: {
+            stock: {
+              decrement: item.qty,
+            },
+          },
+        });
+      } else {
+        // Product without variant - update product stock
+        await tx.product.update({
+          where: { id: item.productId },
+          data: {
+            stock: {
+              decrement: item.qty,
+            },
+          },
+        });
+      }
+    }
+
+    // Set the order to paid
+    await tx.order.update({
+      where: {
+        id: orderId,
+      },
+      data: {
+        isPaid: true,
+        paidAt: new Date(),
+        paymentResult,
+      },
+    });
+  });
+
+  // Get updated order after the transaction
+  const updatedOrder = await prisma.order.findFirst({
+    where: {
+      id: orderId,
+    },
+    include: {
+      orderitems: true,
+      user: {
+        select: {
+          name: true,
+          email: true,
+        },
+      },
+    },
+  });
+
+  if (!updatedOrder) throw new Error('Order not found');
+};
+
+// Approve paypal order and update order to paid
+export const approvePayPalOrder = async (
+  orderId: string,
+  data: { orderID: string },
+) => {
+  try {
+    // Get order from the database
+    const order = await prisma.order.findFirst({
+      where: {
+        id: orderId,
+      },
+      include: {
+        orderitems: true,
+      },
+    });
+
+    if (!order) throw new Error('Order not found');
+
+    // Check stock before capturing payment
+    for (const item of order.orderitems) {
+      if (item.variantId) {
+        // Check variant stock
+        const variant = await prisma.productVariant.findUnique({
+          where: { id: item.variantId },
+          select: { stock: true, sku: true },
+        });
+
+        if (!variant) throw new Error(`Product variant not found`);
+
+        if (variant.stock < item.qty) {
+          throw new Error(
+            `Insufficient stock for ${item.name} (${variant.sku}). Only ${variant.stock} available.`,
+          );
+        }
+      } else {
+        // Check product stock
+        const product = await prisma.product.findUnique({
+          where: { id: item.productId },
+          select: { stock: true, name: true },
+        });
+
+        if (!product) throw new Error(`Product not found`);
+
+        if (product.stock === null || product.stock === undefined) {
+          throw new Error(`Product ${product.name} has no stock information`);
+        }
+
+        if (product.stock < item.qty) {
+          throw new Error(
+            `Insufficient stock for ${product.name}. Only ${product.stock} available.`,
+          );
+        }
+      }
+    }
+
+    // Capture payment if stock is avilable
+    const captureData = await paypal.capturePayment(data.orderID);
+
+    if (
+      !captureData ||
+      captureData.id !== (order.paymentResult as PaymentResult).id ||
+      captureData.status !== 'COMPLETED'
+    ) {
+      throw new Error('Error in PayPal payment');
+    }
+
+    // Update order to paid
+    await updateOrderToPaid({
+      orderId,
+      paymentResult: {
+        id: captureData.id,
+        status: captureData.status,
+        email_address: captureData.payer.email_address,
+        pricePaid:
+          captureData.purchase_units[0]?.payments?.captures[0]?.amount?.value,
+      },
+    });
+
+    revalidatePath(`/order/${orderId}`);
+
+    return {
+      success: true,
+      message: 'Your order has been paid',
+    };
   } catch (error) {
     return {
       success: false,
