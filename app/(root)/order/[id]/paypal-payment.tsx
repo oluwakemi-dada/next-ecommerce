@@ -6,14 +6,14 @@ import {
   usePayPalScriptReducer,
 } from '@paypal/react-paypal-js';
 import {
-  getOrderById,
   createPayPalOrder,
   approvePayPalOrder,
 } from '@/lib/actions/order.actions';
-import { Order } from '@/types';
 
 type PayPalPaymentProps = {
-  order: Order;
+  order: {
+    id: string
+  };
   paypalClientId: string;
 };
 

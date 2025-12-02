@@ -56,7 +56,9 @@ const OrderDetailsContent = async ({ id }: OrderDetailsContentProps) => {
             {/* PayPal Payment */}
             {!isPaid && paymentMethod === 'PayPal' && (
               <PayPalPayment
-                order={order}
+                order={{
+                  id: order.id,
+                }}
                 paypalClientId={process.env.PAYPAL_CLIENT_ID || 'sb'}
               />
             )}
