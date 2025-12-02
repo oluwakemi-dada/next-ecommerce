@@ -144,7 +144,7 @@ export const formatDateTime = (dateString: Date) => {
 };
 
 // Form the pagination links
-export function formUrlQuery({
+export const formUrlQuery = ({
   params,
   key,
   value,
@@ -152,7 +152,7 @@ export function formUrlQuery({
   params: string;
   key: string;
   value: string | null;
-}) {
+}) => {
   const query = qs.parse(params);
 
   query[key] = value;
@@ -164,6 +164,6 @@ export function formUrlQuery({
     },
     {
       skipNull: true,
-    }
+    },
   );
-}
+};
