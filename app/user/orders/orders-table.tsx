@@ -7,6 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import Pagination from '@/components/shared/pagination';
 import { formatCurrency, formatDateTime, formatId } from '@/lib/utils';
 import { getMyOrders } from '@/lib/actions/order.actions';
 
@@ -68,6 +69,13 @@ const OrdersTable = async ({ page }: OrdersTableProps) => {
               ))}
             </TableBody>
           </Table>
+
+          {orders.totalPages > 1 && (
+            <Pagination
+              page={Number(page) || 1}
+              totalPages={orders?.totalPages}
+            />
+          )}
         </>
       )}
     </div>
