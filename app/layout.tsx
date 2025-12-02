@@ -1,4 +1,3 @@
-import { SessionProvider } from 'next-auth/react';
 import { ThemeProvider } from 'next-themes';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
@@ -20,26 +19,24 @@ export const metadata: Metadata = {
   metadataBase: new URL(SERVER_URL),
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} antialiased`}>
-        <SessionProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="light"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <CartInitializer />
-            {children}
-            <Toaster richColors />
-          </ThemeProvider>
-        </SessionProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <CartInitializer />
+          {children}
+          <Toaster richColors />
+        </ThemeProvider>
       </body>
     </html>
   );
