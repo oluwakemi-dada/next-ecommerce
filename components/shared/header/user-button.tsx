@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { deleteSessionCartCookie } from '@/lib/actions/user.actions';
+import { DropdownMenuItem } from '@radix-ui/react-dropdown-menu';
 
 const UserButton = () => {
   const { data: session, status } = useSession();
@@ -68,6 +69,18 @@ const UserButton = () => {
                 {session.user?.email}
               </div>
             </div>
+          </DropdownMenuLabel>
+
+          <DropdownMenuLabel>
+            <Link href="/user/profile" className="w-full">
+              User Profile
+            </Link>
+          </DropdownMenuLabel>
+
+          <DropdownMenuLabel>
+            <Link href="/user/orders" className="w-full">
+              Order History
+            </Link>
           </DropdownMenuLabel>
 
           <div className="w-full">
