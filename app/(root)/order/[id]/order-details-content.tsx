@@ -5,6 +5,7 @@ import ShippingAddressCard from '@/components/shared/order/shipping-address-card
 import OrderItemsTable from '@/components/shared/order/order-items-table';
 import { getOrderById } from '@/lib/actions/order.actions';
 import { ShippingAddress } from '@/types';
+import PayPalPayment from './paypal-payment';
 
 type OrderDetailsContentProps = {
   id: string;
@@ -53,6 +54,12 @@ const OrderDetailsContent = async ({ id }: OrderDetailsContentProps) => {
             prices={{ itemsPrice, taxPrice, shippingPrice, totalPrice }}
           >
             {/* PayPal Payment */}
+            {!isPaid && paymentMethod === 'PayPal' && (
+              <PayPalPayment
+                order={order}
+                paypalClientId={process.env.PAYPAL_CLIENT_ID || 'sb'}
+              />
+            )}
 
             {/* Stripe Payment */}
 

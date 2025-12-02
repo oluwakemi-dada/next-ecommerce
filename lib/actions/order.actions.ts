@@ -197,7 +197,7 @@ const updateOrderToPaid = async ({
       if (item.variantId) {
         // Update the specific variant's stock
         await tx.productVariant.update({
-          where: { id: item.variantId },
+          where: { sku: item.variantId },
           data: {
             stock: {
               decrement: item.qty,
@@ -272,7 +272,7 @@ export const approvePayPalOrder = async (
       if (item.variantId) {
         // Check variant stock
         const variant = await prisma.productVariant.findUnique({
-          where: { id: item.variantId },
+          where: { sku: item.variantId },
           select: { stock: true, sku: true },
         });
 
