@@ -2,7 +2,6 @@ import { Metadata } from 'next';
 import RecentSalesTable from './recent-sales-table';
 import SalesOverview from './sales-overview';
 import StatsCards from './stats-cards';
-import { auth } from '@/auth';
 import { getOrderSummary } from '@/lib/actions/order.actions';
 
 export const metadata: Metadata = {
@@ -10,12 +9,6 @@ export const metadata: Metadata = {
 };
 
 const AdminOverviewPage = async () => {
-  const session = await auth();
-
-  if (session?.user.role !== 'admin') {
-    throw new Error('User is not authorized');
-  }
-
   const summary = await getOrderSummary();
 
   return (
