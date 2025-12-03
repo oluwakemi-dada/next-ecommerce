@@ -82,6 +82,14 @@ const UserButton = () => {
             </Link>
           </DropdownMenuLabel>
 
+          {session?.user?.role === 'admin' && (
+            <DropdownMenuLabel>
+              <Link href="/admin/overview" className="w-full">
+                Admin
+              </Link>
+            </DropdownMenuLabel>
+          )}
+
           <div className="w-full">
             <Button
               type="submit"

@@ -1,8 +1,8 @@
 import { SessionProvider } from 'next-auth/react';
 import { auth } from '@/auth';
-import UserHeader from './user-header';
+import AdminHeader from './admin-header';
 
-export default async function UserSectionLayout({
+export default async function AdminLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -12,7 +12,7 @@ export default async function UserSectionLayout({
   return (
     <SessionProvider session={session}>
       <div className="flex flex-col">
-        <UserHeader />
+        <AdminHeader />
 
         <div className="container mx-auto flex-1 space-y-4 p-8 pt-6">
           {children}

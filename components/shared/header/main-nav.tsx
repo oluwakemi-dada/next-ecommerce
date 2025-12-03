@@ -4,18 +4,16 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
-const links = [
-  {
-    title: 'Profile',
-    href: '/user/profile',
-  },
-  {
-    title: 'Orders',
-    href: '/user/orders',
-  },
-];
+type MainNavLinks = {
+  title: string;
+  href: string;
+};
 
-const MainNav = ({ className, ...props }: HTMLAttributes<HTMLElement>) => {
+type MainNavProps = HTMLAttributes<HTMLElement> & {
+  links: MainNavLinks[];
+};
+
+const MainNav = ({ links, className, ...props }: MainNavProps) => {
   const pathname = usePathname();
 
   return (
