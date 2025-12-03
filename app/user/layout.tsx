@@ -4,14 +4,17 @@ import Link from 'next/link';
 import Menu from '@/components/shared/header/menu';
 import { APP_NAME } from '@/lib/constants';
 import MainNav from './main-nav';
+import { auth } from '@/auth';
 
-export default function UserSectionLayout({
+export default async function UserSectionLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
+
   return (
-    <SessionProvider>
+    <SessionProvider session={session}>
       <div className="flex flex-col">
         <div className="container mx-auto border-b">
           <div className="flex h-16 items-center px-4">

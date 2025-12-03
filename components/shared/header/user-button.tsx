@@ -11,7 +11,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { deleteSessionCartCookie } from '@/lib/actions/user.actions';
-import { DropdownMenuItem } from '@radix-ui/react-dropdown-menu';
 
 const UserButton = () => {
   const { data: session, status } = useSession();
