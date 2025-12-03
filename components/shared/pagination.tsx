@@ -26,8 +26,9 @@ const Pagination = ({ page, totalPages, urlParamName }: PaginationProps) => {
   };
 
   return (
-    <div className="flex gap-2 mt-4">
+    <div className="mt-4 flex gap-3">
       <Button
+        size="lg"
         variant="outline"
         className="w-25 cursor-pointer"
         disabled={Number(page) <= 1}
@@ -36,6 +37,7 @@ const Pagination = ({ page, totalPages, urlParamName }: PaginationProps) => {
         Previous
       </Button>
       <Button
+        size="lg"
         variant="outline"
         className="w-25 cursor-pointer"
         disabled={Number(page) >= totalPages}

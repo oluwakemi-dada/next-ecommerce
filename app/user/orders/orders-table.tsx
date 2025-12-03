@@ -10,6 +10,7 @@ import {
 import Pagination from '@/components/shared/pagination';
 import { formatCurrency, formatDateTime, formatId } from '@/lib/utils';
 import { getMyOrders } from '@/lib/actions/order.actions';
+import { Button } from '@/components/ui/button';
 
 type OrdersTableProps = {
   page: string;
@@ -44,7 +45,7 @@ const OrdersTable = async ({ page }: OrdersTableProps) => {
             </TableHeader>
             <TableBody>
               {orders.data.map((order) => (
-                <TableRow key={order.id}>
+                <TableRow key={order.id} className='h-14'>
                   <TableCell>{formatId(order.id)}</TableCell>
                   <TableCell>
                     {formatDateTime(order.createdAt).dateTime}
@@ -61,9 +62,11 @@ const OrdersTable = async ({ page }: OrdersTableProps) => {
                       : 'Not Delivered'}
                   </TableCell>
                   <TableCell>
-                    <Link href={`/order/${order.id}`}>
-                      <span className="px-2">Details</span>
-                    </Link>
+                    <Button asChild variant="outline" size="sm">
+                      <Link href={`/order/${order.id}`}>
+                        <span className="px-2">Details</span>
+                      </Link>
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
