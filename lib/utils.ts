@@ -70,6 +70,13 @@ export const formatCurrency = (amount: number | string | null) => {
   }
 };
 
+// Format Number
+const NUMBER_FORMATTER = new Intl.NumberFormat('en-US');
+
+export const formatNumber = (number: number) => {
+  return NUMBER_FORMATTER.format(number);
+};
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const serializeVariant = (variant: any) => {
   return {

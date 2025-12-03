@@ -36,3 +36,26 @@ export type Order = z.infer<typeof insertOrderSchema> & {
   };
 };
 export type PaymentResult = z.infer<typeof paymentResultSchema>;
+
+export type MonthlySale = {
+  month: string;
+  totalSales: number;
+};
+
+export type LatestSale = {
+  id: string;
+  createdAt: Date;
+  totalPrice: number;
+  user: {
+    name: string;
+  };
+};
+
+export type Summary = {
+  ordersCount: number;
+  productsCount: number;
+  usersCount: number;
+  totalSales: number;
+  latestSales: LatestSale[];
+  salesData: MonthlySale[];
+};
