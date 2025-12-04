@@ -35,6 +35,8 @@ export const authConfig = {
           request.cookies.get('authjs.session-token')?.value ||
           request.cookies.get('__Secure-authjs.session-token')?.value;
 
+        console.log('tokenValue', tokenValue);
+
         if (tokenValue) {
           try {
             const token = await decode({
@@ -43,7 +45,11 @@ export const authConfig = {
               salt: 'authjs.session-token',
             });
 
+            console.log('decodedToken', token);
+
             userRole = token?.role as string | undefined;
+            console.log('userRole', userRole);
+            
           } catch (error) {
             console.error('Failed to decode token:', error);
           }
