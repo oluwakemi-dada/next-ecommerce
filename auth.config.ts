@@ -1,10 +1,20 @@
-import type { NextAuthConfig } from 'next-auth';
-import { NextResponse } from 'next/server';
+import type { NextAuthConfig, Session } from 'next-auth';
+import { NextRequest, NextResponse } from 'next/server';
+import { decode } from 'next-auth/jwt';
 
 export const authConfig = {
   providers: [],
   callbacks: {
-    authorized: async ({ request, auth }: any) => {
+    authorized: async ({
+      request,
+      auth,
+    }: {
+      request: NextRequest;
+      auth: Session | null;
+    }) => {
+      // Get pathname from the req URL object
+      const { pathname } = request.nextUrl;
+
       // Array of regex patterns of paths we want to protect
       const protectedPaths = [
         /\/shipping-address/,
@@ -16,39 +26,72 @@ export const authConfig = {
         /\/admin/,
       ];
 
-      // Get pathname from the req URL object
-      const { pathname } = request.nextUrl;
+      // Auth pages that signed-in users shouldn't access
+      const authPages = ['/sign-in', '/sign-up'];
 
-      // Check if user is not authenticated and accessing a protected path
-      if (!auth && protectedPaths.some((p) => p.test(pathname))) return false;
+      let userRole = auth?.user?.role;
+      if (!userRole && auth) {
+        const tokenValue =
+          request.cookies.get('authjs.session-token')?.value ||
+          request.cookies.get('__Secure-authjs.session-token')?.value;
+
+        if (tokenValue) {
+          try {
+            const token = await decode({
+              token: tokenValue,
+              secret: process.env.NEXTAUTH_SECRET!,
+              salt: 'authjs.session-token',
+            });
+
+            userRole = token?.role as string | undefined;
+          } catch (error) {
+            console.error('Failed to decode token:', error);
+          }
+        }
+      }
+
+      // Redirect signed-in users away from auth pages
+      if (auth && authPages.includes(pathname)) {
+        return NextResponse.redirect(new URL('/', request.url));
+      }
+
+      // Redirect unauthenticated users from protected paths
+      if (!auth && protectedPaths.some((p) => p.test(pathname))) {
+        // Redirect to sign-in with callback
+        return NextResponse.redirect(
+          new URL(
+            `/sign-in?callbackUrl=${encodeURIComponent(pathname)}`,
+            request.url,
+          ),
+        );
+      }
+
+      // Protect admin routes
+      if (auth && pathname.startsWith('/admin') && userRole !== 'admin') {
+        return NextResponse.redirect(new URL('/unauthorized', request.url));
+      }
+
+      // -----------------------------------------------------------------
+      // -----------------------------------------------------------------
+
+      // Add session cart cookie if needed
+      const response = NextResponse.next();
 
       // Check for session cart id cookie
       if (!request.cookies.get('sessionCartId')) {
         // Generate new session cart id cookie
         const sessionCartId = crypto.randomUUID();
 
-        // Clone req headers
-        const newRequestHeaders = new Headers(request.headers);
-
-        // Create new response and add the new headers
-        const response = NextResponse.next({
-          request: {
-            headers: newRequestHeaders,
-          },
-        });
-
         // Set newly generated sessionCartId in the response cookies
         response.cookies.set('sessionCartId', sessionCartId, {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
           sameSite: 'lax',
-          maxAge: 60 * 60 * 24 * 30, // 30 days
+          maxAge: 7 * 24 * 60 * 60, // 7 days
         });
-
-        return response;
       }
 
-      return true;
+      return response;
     },
   },
 } satisfies NextAuthConfig;

@@ -14,7 +14,7 @@ export const config = {
   },
   session: {
     strategy: 'jwt',
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    maxAge: 7 * 24 * 60 * 60, // 7 days
   },
   adapter: PrismaAdapter(prisma),
   providers: [
@@ -64,17 +64,12 @@ export const config = {
       session.user.role = token.role;
       session.user.name = token.name;
 
-      // If there is an update (user can update their name on profile page), set the user name
-      if (trigger === 'update') {
-        session.user.name = user.name;
-      }
-
       return session;
     },
     jwt: async ({ token, user, trigger, session }: any) => {
       // Assign user fields to the token
       if (user) {
-        token.id = user.id;
+        token.sub = user.id;
         token.role = user.role;
 
         // If user has no name then use the email

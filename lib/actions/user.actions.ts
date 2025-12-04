@@ -25,7 +25,11 @@ export const signInWithCredentials = async (
       password: formData.get('password'),
     });
 
-    await signIn('credentials', user);
+    await signIn('credentials', {
+      email: user.email,
+      password: user.password,
+      redirectTo: formData.get('callbackUrl') as string,
+    });
 
     return {
       success: true,
@@ -77,6 +81,7 @@ export const signUpUser = async (prevState: unknown, formData: FormData) => {
     await signIn('credentials', {
       email: user.email,
       password: plainPassword,
+      redirectTo: formData.get('callbackUrl') as string,
     });
 
     return {
