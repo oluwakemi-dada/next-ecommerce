@@ -1,20 +1,14 @@
 'use client';
 import { toast } from 'sonner';
 import z from 'zod';
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSession } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import {
-  Field,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from '@/components/ui/field';
-import { updateProfileSchema } from '@/lib/validators';
+import { Field, FieldError, FieldGroup } from '@/components/ui/field';
 import { updateProfile } from '@/lib/actions/user.actions';
-import { Description } from '@radix-ui/react-dialog';
+import { updateProfileSchema } from '@/lib/validators';
 
 const ProfileForm = () => {
   const { data: session, update } = useSession();
