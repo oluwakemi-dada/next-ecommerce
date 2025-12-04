@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { Metadata } from 'next';
 import ShippingAddressDataLoader from './shipping-address-data-loader';
 import { Suspense } from 'react';
