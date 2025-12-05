@@ -15,7 +15,7 @@ export const authConfig = {
       // Get pathname from the req URL object
       const { pathname } = request.nextUrl;
 
-      // Array of regex patterns of paths we want to protect
+      // Array of regex patterns of protected paths that use callbacks
       const protectedPaths = [
         /\/shipping-address/,
         /\/payment-method/,
@@ -23,13 +23,16 @@ export const authConfig = {
         /\/profile/,
         /\/user\/(.*)/,
         /\/order\/(.*)/,
-        /\/admin/,
       ];
+
+      // Admin paths - NO callback (redirect straight to unauthorized)
+      const adminPaths = /\/admin/;
 
       // Auth pages that signed-in users shouldn't access
       const authPages = ['/sign-in', '/sign-up'];
 
       let userRole = auth?.user?.role;
+
       if (!userRole && auth) {
         const tokenValue =
           request.cookies.get('authjs.session-token')?.value ||
@@ -60,7 +63,20 @@ export const authConfig = {
         return NextResponse.redirect(new URL('/', request.url));
       }
 
-      // Redirect unauthenticated users from protected paths
+      // Handle admin routes
+      if (adminPaths.test(pathname)) {
+        if (!auth) {
+          // Redirect to sign-in without callback
+          return NextResponse.redirect(new URL('/sign-in', request.url));
+        }
+
+        if (userRole !== 'admin') {
+          // Redirect to unauthorized
+          return NextResponse.redirect(new URL('/unauthorized', request.url));
+        }
+      }
+
+      // Handle regular protected paths with callback
       if (!auth && protectedPaths.some((p) => p.test(pathname))) {
         // Redirect to sign-in with callback
         return NextResponse.redirect(
@@ -69,11 +85,6 @@ export const authConfig = {
             request.url,
           ),
         );
-      }
-
-      // Protect admin routes
-      if (auth && pathname.startsWith('/admin') && userRole !== 'admin') {
-        return NextResponse.redirect(new URL('/unauthorized', request.url));
       }
 
       // -----------------------------------------------------------------
