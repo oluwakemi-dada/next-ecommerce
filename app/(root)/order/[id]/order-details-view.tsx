@@ -7,11 +7,11 @@ import { getOrderById } from '@/lib/actions/order.actions';
 import { ShippingAddress } from '@/types';
 import PayPalPayment from './paypal-payment';
 
-type OrderDetailsContentProps = {
+type OrderDetailsViewProps = {
   id: string;
 };
 
-const OrderDetailsContent = async ({ id }: OrderDetailsContentProps) => {
+const OrderDetailsView = async ({ id }: OrderDetailsViewProps) => {
   const order = await getOrderById(id);
 
   if (!order) notFound();
@@ -73,4 +73,4 @@ const OrderDetailsContent = async ({ id }: OrderDetailsContentProps) => {
   );
 };
 
-export default OrderDetailsContent;
+export default OrderDetailsView;
