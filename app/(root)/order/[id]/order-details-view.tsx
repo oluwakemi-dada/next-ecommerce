@@ -6,6 +6,7 @@ import OrderItemsTable from '@/components/shared/order/order-items-table';
 import { getOrderById } from '@/lib/actions/order.actions';
 import { ShippingAddress } from '@/types';
 import PayPalPayment from './paypal-payment';
+import { auth } from '@/auth';
 
 type OrderDetailsViewProps = {
   id: string;
@@ -14,9 +15,12 @@ type OrderDetailsViewProps = {
 const OrderDetailsView = async ({ id }: OrderDetailsViewProps) => {
   const order = await getOrderById(id);
 
+  const session = await auth();
+
   if (!order) notFound();
 
   const {
+    user,
     shippingAddress,
     orderitems,
     itemsPrice,
@@ -53,19 +57,23 @@ const OrderDetailsView = async ({ id }: OrderDetailsViewProps) => {
           <OrderSummaryCard
             prices={{ itemsPrice, taxPrice, shippingPrice, totalPrice }}
           >
-            {/* PayPal Payment */}
-            {!isPaid && paymentMethod === 'PayPal' && (
-              <PayPalPayment
-                order={{
-                  id: order.id,
-                }}
-                paypalClientId={process.env.PAYPAL_CLIENT_ID || 'sb'}
-              />
+            {session?.user.id === user.id && (
+              <>
+                {/* PayPal Payment */}
+                {!isPaid && paymentMethod === 'PayPal' && (
+                  <PayPalPayment
+                    order={{
+                      id: order.id,
+                    }}
+                    paypalClientId={process.env.PAYPAL_CLIENT_ID || 'sb'}
+                  />
+                )}
+
+                {/* Stripe Payment */}
+
+                {/* Cash On Delivery */}
+              </>
             )}
-
-            {/* Stripe Payment */}
-
-            {/* Cash On Delivery */}
           </OrderSummaryCard>
         </div>
       </div>

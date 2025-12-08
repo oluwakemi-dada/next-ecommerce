@@ -119,7 +119,7 @@ export const getOrderById = async (orderId: string) => {
     },
     include: {
       orderitems: true,
-      user: { select: { name: true, email: true } },
+      user: { select: { name: true, email: true, id: true } },
     },
   });
 
