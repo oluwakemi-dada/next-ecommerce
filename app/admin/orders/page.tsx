@@ -41,7 +41,12 @@ const AdminOrdersPage = async ({ searchParams }: AdminOrdersPageProps) => {
             Please select a valid page from the pagination below.
           </div>
         ) : (
-          <OrdersTable orders={ordersResponse.data} showEmptyMessage={false} />
+          <OrdersTable
+            orders={ordersResponse.data}
+            showEmptyMessage={false}
+            showUser
+            showAction
+          />
         )}
 
         {ordersResponse.totalPages > 1 && (

@@ -8,18 +8,22 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
+import { deleteOrder } from '@/lib/actions/order.actions';
 import { formatCurrency, formatDateTime, formatId } from '@/lib/utils';
 import { Order } from '@/types';
+import DeleteDialog from '../delete-dialog';
 
 type OrdersTableProps = {
   orders: Order[];
   showUser?: boolean;
+  showAction?: boolean;
   showEmptyMessage?: boolean;
 };
 
 const OrdersTable = async ({
   orders,
   showUser,
+  showAction,
   showEmptyMessage = true,
 }: OrdersTableProps) => {
   return (
@@ -52,6 +56,7 @@ const OrdersTable = async ({
                   <TableCell>
                     {formatDateTime(order.createdAt).dateTime}
                   </TableCell>
+                  {showUser && <TableCell>{order.user.name}</TableCell>}
                   <TableCell>{formatCurrency(order.totalPrice)}</TableCell>
                   <TableCell>
                     {order.isPaid && order.paidAt
@@ -69,6 +74,9 @@ const OrdersTable = async ({
                         <span className="px-2">Details</span>
                       </Link>
                     </Button>
+                    {showAction && (
+                      <DeleteDialog id={order.id} action={deleteOrder} />
+                    )}
                   </TableCell>
                 </TableRow>
               ))}
