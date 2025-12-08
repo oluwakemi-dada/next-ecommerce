@@ -2,7 +2,7 @@ import { Suspense } from 'react';
 import { Metadata } from 'next';
 import Loader from '@/components/shared/loader';
 import { formatId } from '@/lib/utils';
-import OrderDetailsContent from './order-details-content';
+import OrderDetailsView from './order-details-view';
 
 type OrderDetailsPage = {
   params: Promise<{
@@ -21,7 +21,7 @@ const OrderDetailsPage = async ({ params }: OrderDetailsPage) => {
     <>
       <h1 className="py-4 text-2xl">Order {formatId(id)}</h1>
       <Suspense fallback={<Loader />}>
-        <OrderDetailsContent id={id} />
+        <OrderDetailsView id={id} />
       </Suspense>
     </>
   );

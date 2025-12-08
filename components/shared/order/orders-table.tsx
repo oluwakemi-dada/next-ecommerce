@@ -7,23 +7,24 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import Pagination from '@/components/shared/pagination';
 import { formatCurrency, formatDateTime, formatId } from '@/lib/utils';
-import { getMyOrders } from '@/lib/actions/order.actions';
 import { Button } from '@/components/ui/button';
+import { Order } from '@/types';
 
 type OrdersTableProps = {
-  page: string;
+  orders: Order[];
+  showUser?: boolean;
+  showEmptyMessage?: boolean;
 };
 
-const OrdersTable = async ({ page }: OrdersTableProps) => {
-  const orders = await getMyOrders({
-    page: Number(page) || 1,
-  });
-
+const OrdersTable = async ({
+  orders,
+  showUser,
+  showEmptyMessage = true,
+}: OrdersTableProps) => {
   return (
     <div className="overflow-x-auto">
-      {orders.data.length === 0 ? (
+      {orders.length === 0 && showEmptyMessage ? (
         <div>
           You have no orders yet.{' '}
           <Link href="/" className="text-muted-foreground">
@@ -37,6 +38,7 @@ const OrdersTable = async ({ page }: OrdersTableProps) => {
               <TableRow>
                 <TableHead>ID</TableHead>
                 <TableHead>DATE</TableHead>
+                {showUser && <TableHead>BUYER</TableHead>}
                 <TableHead>TOTAL</TableHead>
                 <TableHead>PAID</TableHead>
                 <TableHead>DELIVERED</TableHead>
@@ -44,8 +46,8 @@ const OrdersTable = async ({ page }: OrdersTableProps) => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {orders.data.map((order) => (
-                <TableRow key={order.id} className='h-14'>
+              {orders.map((order) => (
+                <TableRow key={order.id} className="h-14">
                   <TableCell>{formatId(order.id)}</TableCell>
                   <TableCell>
                     {formatDateTime(order.createdAt).dateTime}
@@ -72,13 +74,6 @@ const OrdersTable = async ({ page }: OrdersTableProps) => {
               ))}
             </TableBody>
           </Table>
-
-          {orders.totalPages > 1 && (
-            <Pagination
-              page={Number(page) || 1}
-              totalPages={orders?.totalPages}
-            />
-          )}
         </>
       )}
     </div>

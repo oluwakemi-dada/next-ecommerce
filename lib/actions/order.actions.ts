@@ -4,28 +4,13 @@ import { revalidatePath } from 'next/cache';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
 import { auth } from '@/auth';
 import { prisma } from '@/db/prisma';
-import { CartItem, PaymentResult } from '@/types';
+import { CartItem, Order, PaymentResult } from '@/types';
 import { convertToPlainObject, formatError } from '../utils';
 import { insertOrderSchema } from '../validators';
 import { paypal } from '../paypal';
 import { PAGE_SIZE } from '../constants';
 import { getMyCart } from './cart.actions';
 import { getUserById } from './user.actions';
-
-// Get order by id
-export const getOrderById = async (orderId: string) => {
-  const data = await prisma.order.findFirst({
-    where: {
-      id: orderId,
-    },
-    include: {
-      orderitems: true,
-      user: { select: { name: true, email: true } },
-    },
-  });
-
-  return convertToPlainObject(data);
-};
 
 // Create order and create the order items
 export const createOrder = async () => {
@@ -124,6 +109,21 @@ export const createOrder = async () => {
       message: formatError(error),
     };
   }
+};
+
+// Get order by id
+export const getOrderById = async (orderId: string) => {
+  const data = await prisma.order.findFirst({
+    where: {
+      id: orderId,
+    },
+    include: {
+      orderitems: true,
+      user: { select: { name: true, email: true } },
+    },
+  });
+
+  return convertToPlainObject(data);
 };
 
 // Create new paypal order
@@ -349,7 +349,7 @@ export const getMyOrders = async ({
   page,
 }: {
   limit?: number;
-  page?: number;
+  page: number;
 }) => {
   const session = await auth();
   if (!session) throw new Error('User is not authorized');
@@ -362,7 +362,7 @@ export const getMyOrders = async ({
       createdAt: 'desc',
     },
     take: limit,
-    skip: (page! - 1) * limit,
+    skip: (page - 1) * limit,
   });
 
   const dataCount = await prisma.order.count({
@@ -372,7 +372,7 @@ export const getMyOrders = async ({
   });
 
   return {
-    data,
+    data: convertToPlainObject(data) as unknown as Order[],
     totalPages: Math.ceil(dataCount / limit),
   };
 };
@@ -434,5 +434,34 @@ export const getOrderSummary = async () => {
     totalSales,
     latestSales,
     salesData,
+  };
+};
+
+// Get all orders
+export const getAllOrders = async ({
+  limit = PAGE_SIZE,
+  page,
+}: {
+  limit?: number;
+  page: number;
+}) => {
+  const data = await prisma.order.findMany({
+    orderBy: {
+      createdAt: 'desc',
+    },
+    take: limit,
+    skip: (page - 1) * limit,
+    include: {
+      user: {
+        select: { name: true },
+      },
+    },
+  });
+
+  const datacount = await prisma.order.count();
+
+  return {
+    data: convertToPlainObject(data) as unknown as Order[],
+    totalPages: Math.ceil(datacount / limit),
   };
 };
