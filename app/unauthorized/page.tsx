@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: 'Unauthorized Access',
 };
 
-export default function UnauthorizedPage() {
+const UnauthorizedPage = () => {
   return (
     <div className="container mx-auto flex h-[calc(100vh-200px)] flex-col items-center justify-center space-y-4">
       <h1 className="h1-bold text-4xl">Unauthorized Access</h1>
@@ -19,4 +19,6 @@ export default function UnauthorizedPage() {
       </Button>
     </div>
   );
-}
+};
+
+export default UnauthorizedPage;

@@ -3,12 +3,15 @@ import RecentSalesTable from './recent-sales-table';
 import SalesOverview from './sales-overview';
 import StatsCards from './stats-cards';
 import { getOrderSummary } from '@/lib/actions/order.actions';
+import { requireAdmin } from '@/lib/auth-guard';
 
 export const metadata: Metadata = {
   title: 'Admin Dashboard',
 };
 
 const AdminOverviewPage = async () => {
+  await requireAdmin();
+  
   const summary = await getOrderSummary();
 
   return (
