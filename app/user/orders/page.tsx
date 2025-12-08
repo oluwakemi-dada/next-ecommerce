@@ -35,7 +35,7 @@ const OrdersPage = async ({ searchParams }: OrdersPageProps) => {
 
       {ordersResponse.totalPages > 1 && (
         <Pagination
-          page={pageNumber || 1}
+          currentPage={pageNumber || 1}
           totalPages={ordersResponse?.totalPages}
         />
       )}
