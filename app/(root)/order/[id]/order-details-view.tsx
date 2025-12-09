@@ -7,6 +7,7 @@ import { getOrderById } from '@/lib/actions/order.actions';
 import { ShippingAddress } from '@/types';
 import PayPalPayment from './paypal-payment';
 import { auth } from '@/auth';
+import { MarkAsPaidButton, MarkAsDeliveredButton } from './admin-order-buttons';
 
 type OrderDetailsViewProps = {
   id: string;
@@ -16,6 +17,8 @@ const OrderDetailsView = async ({ id }: OrderDetailsViewProps) => {
   const order = await getOrderById(id);
 
   const session = await auth();
+
+  const isAdmin = session?.user.role === 'admin' || false;
 
   if (!order) notFound();
 
@@ -70,9 +73,24 @@ const OrderDetailsView = async ({ id }: OrderDetailsViewProps) => {
                 )}
 
                 {/* Stripe Payment */}
-
-                {/* Cash On Delivery */}
               </>
+            )}
+
+            {/* Cash On Delivery */}
+            {isAdmin && !isPaid && paymentMethod === 'CashOnDelivery' && (
+              <MarkAsPaidButton
+                order={{
+                  id: order.id,
+                }}
+              />
+            )}
+
+            {isAdmin && isPaid && !isDelivered && (
+              <MarkAsDeliveredButton
+                order={{
+                  id: order.id,
+                }}
+              />
             )}
           </OrderSummaryCard>
         </div>
