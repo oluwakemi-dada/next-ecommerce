@@ -1,8 +1,10 @@
 'use server';
-import { prisma } from '@/db/prisma';
-import { LATEST_PRODUCTS_LIMIT, PAGE_SIZE } from '../constants';
-import { formatError, serializeProduct } from '../utils';
+import z from 'zod';
 import { revalidatePath } from 'next/cache';
+import { prisma } from '@/db/prisma';
+import { formatError, serializeProduct } from '../utils';
+import { insertProductSchema, updateProductSchema } from '../validators';
+import { LATEST_PRODUCTS_LIMIT, PAGE_SIZE } from '../constants';
 
 // Get latests products
 export const getLatestProducts = async () => {
@@ -84,6 +86,80 @@ export const deleteProduct = async (id: string) => {
     return {
       success: true,
       message: 'Product deleted successfully',
+    };
+  } catch (error) {
+    return { success: false, message: formatError(error) };
+  }
+};
+
+// Create a product
+export const createProduct = async (
+  data: z.infer<typeof insertProductSchema>,
+) => {
+  try {
+    const product = insertProductSchema.parse(data);
+
+    // Destructure variants from the product data
+    const { variants, ...productData } = product;
+
+    await prisma.product.create({
+      data: {
+        ...productData,
+        ...(variants &&
+          variants.length > 0 && {
+            variants: { create: variants },
+          }),
+      },
+    });
+
+    revalidatePath('/admin/products');
+
+    return {
+      success: true,
+      message: 'Product created successfully',
+    };
+  } catch (error) {
+    return { success: false, message: formatError(error) };
+  }
+};
+
+// Update a product
+export const updateProduct = async (
+  data: z.infer<typeof updateProductSchema>,
+) => {
+  try {
+    const product = updateProductSchema.parse(data);
+    const { id, variants, ...productData } = product;
+
+    // Find the product first to ensure it exists
+    const productExists = await prisma.product.findFirst({
+      where: { id },
+      include: { variants: true },
+    });
+
+    if (!productExists) throw new Error('Product not found');
+
+    await prisma.product.update({
+      where: { id },
+      data: {
+        ...productData,
+        variants: {
+          // Delete all existing variants first
+          deleteMany: {},
+          // Then create new ones if any exist
+          ...(variants &&
+            variants.length > 0 && {
+              create: variants,
+            }),
+        },
+      },
+    });
+
+    revalidatePath('/admin/products');
+
+    return {
+      success: true,
+      message: 'Product updated successfully',
     };
   } catch (error) {
     return { success: false, message: formatError(error) };

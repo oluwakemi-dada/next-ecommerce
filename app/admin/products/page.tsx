@@ -27,6 +27,9 @@ const AdminProductsPage = async (props: AdminProductsPageProps) => {
     category,
   });
 
+  console.log(products);
+  
+
   return (
     <div className="space-y-3">
       <ProductsHeader searchText={searchText} />

@@ -38,6 +38,11 @@ export const insertProductSchema = z.object({
   variants: z.array(variantSchema).optional().default([]),
 });
 
+// Schema for updating products
+export const updateProductSchema = insertProductSchema.extend({
+  id: z.string().min(1, 'Id is required'),
+});
+
 // Schema for signing in users
 export const signInFormSchema = z.object({
   email: z.string().email('Invalid email address'),
