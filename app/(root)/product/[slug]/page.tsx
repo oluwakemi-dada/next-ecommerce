@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 import ProductDetails from '@/app/(root)/product/[slug]/product-details';
 import Loader from '@/components/shared/loader';
-import { getAllProducts } from '@/lib/actions/product.actions';
+import { getAllProductsRaw } from '@/lib/actions/product.actions';
 
 type ProductDetailsPageProps = {
   params: Promise<{ slug: string }>;
@@ -12,7 +12,7 @@ export const revalidate = 3600;
 
 // For builds
 export const generateStaticParams = async () => {
-  const products = await getAllProducts();
+  const products = await getAllProductsRaw();
 
   const ids = products.data.map((product) => ({
     slug: product.slug,

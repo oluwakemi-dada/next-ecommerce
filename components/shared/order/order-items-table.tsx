@@ -30,7 +30,7 @@ const OrderItemsTable = ({ items }: OrderItemsTableProps) => {
           </TableHeader>
           <TableBody>
             {items.map((item) => (
-              <TableRow key={item.variantId || item.productId}>
+              <TableRow key={item.variantId || item.productId} className="h-14">
                 <TableCell>
                   <Link
                     href={`/product/${item.slug}`}
