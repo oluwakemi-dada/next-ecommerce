@@ -28,7 +28,7 @@ const AdminProductsPage = async (props: AdminProductsPageProps) => {
   });
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       <ProductsHeader searchText={searchText} />
 
       <ProductsTable products={products.data} />
