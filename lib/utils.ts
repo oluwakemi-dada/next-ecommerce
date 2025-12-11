@@ -1,6 +1,8 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import qs from 'query-string';
+import { VariantInput } from '@/types';
+import { CATEGORY_OPTIONS } from './constants';
 
 export const cn = (...inputs: ClassValue[]) => {
   return twMerge(clsx(inputs));
@@ -15,6 +17,14 @@ export const convertToPlainObject = <T>(value: T): T => {
 export const formatNumberWithDecimal = (num: number): string => {
   const [int, decimal] = num.toString().split('.');
   return decimal ? `${int}.${decimal.padEnd(2, '0')}` : `${int}.00`;
+};
+
+export const parseNumberInput = (raw: string): number | null => {
+  if (raw === '') return null;
+  const parsed = Number(raw);
+
+  // fallback for invalid numbers
+  return isNaN(parsed) ? 0 : parsed;
 };
 
 // Format errors
@@ -97,6 +107,12 @@ export const serializeProduct = (product: any) => {
     updatedAt: product.updatedAt.toISOString(),
     variants: product.variants?.map(serializeVariant) || [],
   };
+};
+
+// Helper to get sizes for a category
+export const getSizesForCategory = (categoryValue: string): string[] => {
+  const category = CATEGORY_OPTIONS.find((cat) => cat.value === categoryValue);
+  return category?.sizes ? [...category.sizes] : [];
 };
 
 // Shorten the UUID
@@ -205,4 +221,88 @@ export const generatePagination = (currentPage: number, totalPages: number) => {
     '...',
     totalPages,
   ];
+};
+
+// Helper function to validate variants
+export const validateVariants = (
+  variants: VariantInput[],
+): {
+  isValid: boolean;
+  errors: string[];
+} => {
+  const errors: string[] = [];
+
+  variants.forEach((variant, index) => {
+    // Check if either color or size is provided
+    if (!variant.color && !variant.size) {
+      errors.push(
+        `Variant ${index + 1}: Either color or size must be provided`,
+      );
+    }
+
+    if (variant.stock === null || variant.stock === undefined) {
+      errors.push(`Variant ${index + 1}: Stock is required`);
+    }
+  });
+
+  return {
+    isValid: errors.length === 0,
+    errors,
+  };
+};
+
+// Helper function to validate variant uniqueness WITHIN a product
+export const validateVariantUniqueness = (
+  variants: VariantInput[],
+): {
+  isValid: boolean;
+  duplicates: string[];
+} => {
+  const seen = new Set<string>();
+  const duplicates: string[] = [];
+
+  for (const variant of variants) {
+    const colorKey = variant.color === null ? 'NULL' : variant.color;
+    const sizeKey = variant.size === null ? 'NULL' : variant.size;
+    const key = `${colorKey}-${sizeKey}`;
+
+    if (seen.has(key)) {
+      const colorText = variant.color || 'No Color';
+      const sizeText = variant.size || 'No Size';
+      duplicates.push(`${colorText} / ${sizeText}`);
+    }
+    seen.add(key);
+  }
+
+  return {
+    isValid: duplicates.length === 0,
+    duplicates,
+  };
+};
+
+// Helper function to generate SKU
+export const generateVariantSKU = (
+  productName: string,
+  productId: string,
+  variant: VariantInput,
+): string => {
+  const namePart = productName
+    .replace(/\s+/g, '')
+    .substring(0, 3)
+    .toUpperCase();
+
+  const colorPart = variant.color
+    ? variant.color.replace(/\s+/g, '').toUpperCase()
+    : '';
+
+  const sizePart = variant.size
+    ? variant.size.replace(/\s+/g, '').toUpperCase()
+    : '';
+
+  const productIdPart = productId.substring(0, 12);
+
+  // Build SKU parts array, filtering out empty strings
+  const parts = [namePart, colorPart, sizePart, productIdPart].filter(Boolean);
+
+  return parts.join('-');
 };

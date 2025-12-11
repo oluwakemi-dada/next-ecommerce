@@ -52,12 +52,91 @@ export const productDefaultValues = {
   variants: [],
 };
 
-const variantDefaultValues = {
+export const variantDefaultValues = {
   color: null,
   size: null,
   stock: 0,
   price: null,
-  sku: '',
   image: null,
   isActive: true,
 };
+
+export const PRODUCT_CATEGORIES = {
+  CLOTHING_MENS: {
+    value: 'mens-clothing',
+    label: "Men's Clothing",
+    sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'],
+  },
+  CLOTHING_WOMENS: {
+    value: 'womens-clothing',
+    label: "Women's Clothing",
+    sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'],
+  },
+  DRESSES: {
+    value: 'dresses',
+    label: 'Dresses',
+    sizes: ['2', '4', '6', '8', '10', '12', '14', '16', '18', '20'],
+  },
+  SHOES_MENS: {
+    value: 'mens-shoes',
+    label: "Men's Shoes",
+    sizes: ['6', '7', '8', '9', '10', '11', '12', '13', '14'],
+  },
+  SHOES_WOMENS: {
+    value: 'womens-shoes',
+    label: "Women's Shoes",
+    sizes: [
+      '5',
+      '5.5',
+      '6',
+      '6.5',
+      '7',
+      '7.5',
+      '8',
+      '8.5',
+      '9',
+      '9.5',
+      '10',
+      '10.5',
+      '11',
+    ],
+  },
+  BRAS: {
+    value: 'bras',
+    label: 'Bras',
+    sizes: [
+      '30A',
+      '30B',
+      '30C',
+      '30D',
+      '32A',
+      '32B',
+      '32C',
+      '32D',
+      '34A',
+      '34B',
+      '34C',
+      '34D',
+      '36A',
+      '36B',
+      '36C',
+      '36D',
+      '38A',
+      '38B',
+      '38C',
+      '38D',
+    ],
+  },
+  ACCESSORIES: {
+    value: 'accessories',
+    label: 'Accessories',
+    sizes: ['One Size'],
+  },
+  KIDS_CLOTHING: {
+    value: 'kids-clothing',
+    label: "Kids' Clothing",
+    sizes: ['2T', '3T', '4T', '5T', '6', '7', '8', '10', '12', '14', '16'],
+  },
+} as const;
+
+export const CATEGORY_OPTIONS = Object.values(PRODUCT_CATEGORIES);

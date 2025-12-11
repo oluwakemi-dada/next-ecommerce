@@ -59,7 +59,6 @@ const ProfileForm = () => {
                   disabled
                   aria-disabled="true"
                   placeholder="Email"
-                  className="input-field"
                 />
               </Field>
             )}
@@ -73,7 +72,6 @@ const ProfileForm = () => {
                 <Input
                   {...field}
                   placeholder="Name"
-                  className="input-field"
                   aria-invalid={fieldState.invalid}
                 />
                 {fieldState.invalid && (

@@ -2,7 +2,13 @@
 import z from 'zod';
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/db/prisma';
-import { formatError, serializeProduct } from '../utils';
+import {
+  formatError,
+  generateVariantSKU,
+  serializeProduct,
+  validateVariants,
+  validateVariantUniqueness,
+} from '../utils';
 import { insertProductSchema, updateProductSchema } from '../validators';
 import { LATEST_PRODUCTS_LIMIT, PAGE_SIZE } from '../constants';
 
@@ -57,6 +63,9 @@ export const getAllProducts = async ({
   category,
 }: GetAllProductsProps) => {
   const data = await prisma.product.findMany({
+    orderBy: {
+      createdAt: 'desc',
+    },
     skip: (page - 1) * limit,
     take: limit,
     include: { variants: true },
@@ -98,19 +107,42 @@ export const createProduct = async (
 ) => {
   try {
     const product = insertProductSchema.parse(data);
-
-    // Destructure variants from the product data
     const { variants, ...productData } = product;
 
-    await prisma.product.create({
-      data: {
-        ...productData,
-        ...(variants &&
-          variants.length > 0 && {
-            variants: { create: variants },
-          }),
-      },
+    // Validate variants if they exist
+    if (variants && variants.length > 0) {
+      // Check color/size requirement
+      const variantValidation = validateVariants(variants);
+      if (!variantValidation.isValid) {
+        throw new Error(variantValidation.errors.join('. '));
+      }
+
+      // Check uniqueness
+      const uniqueValidation = validateVariantUniqueness(variants);
+      if (!uniqueValidation.isValid) {
+        throw new Error(
+          `Duplicate variants found: ${uniqueValidation.duplicates.join(', ')}. Each color/size combination must be unique.`,
+        );
+      }
+    }
+
+    // Create product first to get the ID
+    const createdProduct = await prisma.product.create({
+      data: productData,
     });
+
+    // If variants exist, create them with generated SKUs
+    if (variants && variants.length > 0) {
+      await prisma.productVariant.createMany({
+        data: variants.map((variant) => ({
+          ...variant,
+          productId: createdProduct.id,
+          sku: generateVariantSKU(productData.name, createdProduct.id, variant),
+          price: variant.price ?? productData.price,
+          stock: variant.stock ?? 0,
+        })),
+      });
+    }
 
     revalidatePath('/admin/products');
 
@@ -134,25 +166,51 @@ export const updateProduct = async (
     // Find the product first to ensure it exists
     const productExists = await prisma.product.findFirst({
       where: { id },
-      include: { variants: true },
     });
 
     if (!productExists) throw new Error('Product not found');
 
-    await prisma.product.update({
-      where: { id },
-      data: {
-        ...productData,
-        variants: {
-          // Delete all existing variants first
-          deleteMany: {},
-          // Then create new ones if any exist
-          ...(variants &&
-            variants.length > 0 && {
-              create: variants,
-            }),
-        },
-      },
+    if (variants && variants.length > 0) {
+      // Check color/size requirement
+      const variantValidation = validateVariants(variants);
+      if (!variantValidation.isValid) {
+        throw new Error(variantValidation.errors.join('. '));
+      }
+
+      // Check uniqueness
+      const uniqueValidation = validateVariantUniqueness(variants);
+      if (!uniqueValidation.isValid) {
+        throw new Error(
+          `Duplicate variants found: ${uniqueValidation.duplicates.join(', ')}. Each color/size combination must be unique.`,
+        );
+      }
+    }
+
+    // Use transaction for atomic update
+    await prisma.$transaction(async (tx) => {
+      // Update product
+      await tx.product.update({
+        where: { id },
+        data: productData,
+      });
+
+      // Delete all existing variants
+      await tx.productVariant.deleteMany({
+        where: { productId: id },
+      });
+
+      // Create new variants with generated SKUs
+      if (variants && variants.length > 0) {
+        await tx.productVariant.createMany({
+          data: variants.map((variant) => ({
+            ...variant,
+            productId: id,
+            sku: generateVariantSKU(productData.name, id, variant),
+            price: variant.price ?? productData.price,
+            stock: variant.stock ?? 0,
+          })),
+        });
+      }
     });
 
     revalidatePath('/admin/products');
