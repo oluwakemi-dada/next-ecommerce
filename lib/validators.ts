@@ -24,13 +24,19 @@ export const variantSchema = z
   })
   .refine((data) => data.color || data.size, {
     message: 'Either color or size must be provided',
-    path: ['color'], // Error will show on color field
+    path: ['color'],
   });
 
 // Schema for inserting products
 export const insertProductSchema = z.object({
   name: z.string().min(3, 'Name must be at least 3 characters'),
-  slug: z.string().min(3, 'Slug must be at least 3 characters'),
+  slug: z
+    .string()
+    .min(3, 'Slug must be at least 3 characters')
+    .regex(
+      /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
+      'Slug must be lowercase with hyphens only',
+    ),
   category: z.string().min(3, 'Category must be at least 3 characters'),
   brand: z.string().min(3, 'Brand must be at least 3 characters'),
   description: z.string().min(3, 'Description must be at least 3 characters'),

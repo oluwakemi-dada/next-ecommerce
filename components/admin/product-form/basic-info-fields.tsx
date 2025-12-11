@@ -53,6 +53,14 @@ const BasicInfoFields = ({ control, form }: BasicInfoFieldsProps) => {
                   id="slug-input"
                   placeholder="product-slug"
                   aria-invalid={fieldState.invalid}
+                  onBlur={(e) => {
+                    const formatted = slugify(e.target.value, {
+                      lower: true,
+                      strict: true,
+                      remove: /[*+~.()'"!:@]/g,
+                    });
+                    field.onChange(formatted);
+                  }}
                 />
                 <Button
                   type="button"
