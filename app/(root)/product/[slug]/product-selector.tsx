@@ -60,18 +60,6 @@ const ProductSelector = ({
     );
   }, [availableVariants, selectedColor, hasColors, hasSizes, allSizes]);
 
-  // Check which colors are available for the selected size
-  const availableColorsForSize = useMemo(() => {
-    if (!hasColors || !hasSizes || !selectedSize) return new Set(allColors);
-
-    return new Set(
-      availableVariants
-        .filter((v) => v.size === selectedSize)
-        .map((v) => v.color)
-        .filter(Boolean),
-    );
-  }, [availableVariants, selectedSize, hasColors, hasSizes, allColors]);
-
   // Handle color selection with auto-adjustment
   const handleColorSelect = (color: string) => {
     setSelectedColor(color);
@@ -157,7 +145,6 @@ const ProductSelector = ({
           <div className="mb-3 font-medium">Available Color</div>
           <div className="flex gap-3">
             {allColors.map((color) => {
-              const isAvailable = availableColorsForSize.has(color);
               const isSelected = selectedColor === color;
 
               return (
@@ -172,7 +159,6 @@ const ProductSelector = ({
                     isSelected
                       ? 'ring-accent-foreground border-transparent ring-1 ring-offset-1'
                       : 'border-gray-300',
-                    !isAvailable && 'opacity-40',
                   )}
                 ></Button>
               );
