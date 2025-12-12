@@ -15,7 +15,7 @@ type CartTableRowProps = {
 };
 
 const CartTableRow = ({ item }: CartTableRowProps) => {
-  const setCart = useCartStore((state) => state.setCart)
+  const setCart = useCartStore((state) => state.setCart);
   const [loading, setLoading] = useState<null | 'add' | 'remove'>(null);
 
   const handleRemove = async () => {
@@ -72,7 +72,15 @@ const CartTableRow = ({ item }: CartTableRowProps) => {
       <div className="flex flex-1 flex-col gap-y-2">
         <div className="font-semibold">{item.name}</div>
         {item.size && <div>Size: {item.size}</div>}
-        {item.color && <div>Color: {item.color}</div>}
+        {item.color && (
+          <div className="flex mb-2">
+            <div>Color: </div>
+            <div
+              className="h-6 w-6 rounded-full ml-2"
+              style={{ backgroundColor: item.color }}
+            ></div>
+          </div>
+        )}
 
         <div className="flex justify-between">
           <div className="flex items-center gap-3">
