@@ -3,6 +3,7 @@ import { Field, FieldError, FieldGroup } from '@/components/ui/field';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 type DescriptionFieldProps = {
   control: Control<any>;
 };

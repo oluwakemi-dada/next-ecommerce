@@ -4,6 +4,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { parseNumberInput } from '@/lib/utils';
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 type PricingFieldsProps = {
   control: Control<any>;
   hasVariants: boolean;

@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { FieldGroup } from '@/components/ui/field';
 import { VariantFormFields } from './variant-form-fields';
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 type VariantsSectionProps = {
   fields: FieldArrayWithId<any, 'variants', 'id'>[];
   control: Control<any>;

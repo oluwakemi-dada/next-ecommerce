@@ -20,6 +20,7 @@ import {
 } from '@/components/ui/select';
 import { getSizesForCategory, parseNumberInput } from '@/lib/utils';
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 type VariantFormFieldsProps = {
   index: number;
   control: Control<any>;

@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import LoadingIcon from '@/components/shared/loading-icon';
 import { addItemToCart } from '@/lib/actions/cart.actions';
-import { CartItem, Product, VariantInput } from '@/types';
+import { CartItem, Product, Variant } from '@/types';
 import ProductSelector from './product-selector';
 import { useCartStore } from '@/store/cart-store';
 
@@ -30,7 +30,7 @@ const AddToCart = ({ product, outOfStock }: AddToCartProps) => {
     : undefined;
 
   const [selectedVariant, setSelectedVariant] = useState<
-    VariantInput | undefined
+    Variant | undefined
   >(defaultVariant);
 
   const item: CartItem = {

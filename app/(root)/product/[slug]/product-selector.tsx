@@ -2,12 +2,12 @@
 import { useState, useEffect, useMemo } from 'react';
 import clsx from 'clsx';
 import { Button } from '@/components/ui/button';
-import { VariantInput } from '@/types';
+import { Variant } from '@/types';
 
 type ProductSelectorProps = {
-  variants: VariantInput[];
-  selectedVariant?: VariantInput;
-  onSelectVariant: (variant: VariantInput) => void;
+  variants: Variant[];
+  selectedVariant?: Variant;
+  onSelectVariant: (variant: Variant) => void;
 };
 
 const ProductSelector = ({

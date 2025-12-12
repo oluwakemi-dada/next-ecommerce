@@ -13,6 +13,7 @@ import {
 import { CATEGORY_OPTIONS } from '@/lib/constants';
 import slugify from 'slugify';
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 type BasicInfoFieldsProps = {
   control: Control<any>;
   form: UseFormReturn<any>;

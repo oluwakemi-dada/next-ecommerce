@@ -9,18 +9,32 @@ const currency = z
     'Price must have exactly two decimal places',
   );
 
-// Variant schema
-export const variantSchema = z
-  .object({
-    color: z.string().optional().nullable(),
-    size: z.string().optional().nullable(),
-    stock: z.coerce
-      .number()
-      .int('Stock must be an integer')
-      .min(0, 'Stock must be 0 or more'),
-    price: currency.optional().nullable(),
-    image: z.string().nullable().optional(),
-    isActive: z.boolean().optional().default(true),
+// Base schema without refinement
+const variantBaseSchema = z.object({
+  color: z.string().optional().nullable(),
+  size: z.string().optional().nullable(),
+  stock: z.coerce
+    .number()
+    .int('Stock must be an integer')
+    .min(0, 'Stock must be 0 or more'),
+  price: currency.optional().nullable(),
+  image: z.string().nullable().optional(),
+  isActive: z.boolean().optional().default(true),
+});
+
+// Input schema (for forms) - with refinement
+export const variantInputSchema = variantBaseSchema.refine(
+  (data) => data.color || data.size,
+  {
+    message: 'Either color or size must be provided',
+    path: ['color'],
+  },
+);
+
+// Schema for variants from database
+export const variantSchema = variantBaseSchema
+  .extend({
+    sku: z.string(),
   })
   .refine((data) => data.color || data.size, {
     message: 'Either color or size must be provided',
@@ -40,12 +54,12 @@ export const insertProductSchema = z.object({
   category: z.string().min(3, 'Category must be at least 3 characters'),
   brand: z.string().min(3, 'Brand must be at least 3 characters'),
   description: z.string().min(3, 'Description must be at least 3 characters'),
-  // images: z.array(z.string()).min(1, 'Product must have at least one image'),
-  // banner: z.string().nullable().optional(),
-  // isFeatured: z.boolean().default(false),
+  images: z.array(z.string()).min(1, 'Product must have at least one image'),
+  banner: z.string().nullable().optional(),
+  isFeatured: z.boolean().default(false),
   price: currency,
   stock: z.number().int().min(0).nullable().optional(),
-  variants: z.array(variantSchema).optional().default([]),
+  variants: z.array(variantInputSchema).optional().default([]),
 });
 
 // Schema for updating products

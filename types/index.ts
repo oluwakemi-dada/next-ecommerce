@@ -4,18 +4,21 @@ import {
   insertCartSchema,
   cartItemSchema,
   shippingAddressSchema,
-  variantSchema,
+  variantInputSchema,
   insertOrderSchema,
   insertOrderItemSchema,
   paymentResultSchema,
+  variantSchema,
 } from '@/lib/validators';
 
-export type VariantInput = z.infer<typeof variantSchema>;
-export type Product = z.infer<typeof insertProductSchema> & {
+export type VariantInput = z.infer<typeof variantInputSchema>;
+export type Variant = z.infer<typeof variantSchema>;
+export type Product = Omit<z.infer<typeof insertProductSchema>, 'variants'> & {
   id: string;
   rating: string;
   numReviews: number;
   createdAt: Date;
+  variants: Variant[];
 };
 
 export type Cart = z.infer<typeof insertCartSchema>;
