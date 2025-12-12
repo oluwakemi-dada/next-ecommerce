@@ -22,7 +22,7 @@ const ProductSelector = ({
   const hasColors = availableVariants.some((v) => v.color);
   const hasSizes = availableVariants.some((v) => v.size);
 
-  // Unique available colors
+  // Unique available colors (ALL colors, not filtered)
   const allColors = useMemo(() => {
     return hasColors
       ? Array.from(
@@ -31,7 +31,7 @@ const ProductSelector = ({
       : [];
   }, [availableVariants, hasColors]);
 
-  // Unique available sizes
+  // Unique available sizes (ALL sizes, not filtered)
   const allSizes = useMemo(() => {
     return hasSizes
       ? Array.from(
@@ -48,37 +48,63 @@ const ProductSelector = ({
     initialSelectedVariant?.size ?? allSizes[0] ?? undefined,
   );
 
-  // Sizes valid for selected color
-  const filteredSizes = useMemo(() => {
-    if (!hasSizes) return [];
+  // Check which sizes are available for the selected color
+  const availableSizesForColor = useMemo(() => {
+    if (!hasSizes || !hasColors || !selectedColor) return new Set(allSizes);
 
-    if (!hasColors || !selectedColor) return allSizes;
-
-    return Array.from(
-      new Set(
-        availableVariants
-          .filter((v) => v.color === selectedColor)
-          .map((v) => v.size)
-          .filter(Boolean),
-      ),
+    return new Set(
+      availableVariants
+        .filter((v) => v.color === selectedColor)
+        .map((v) => v.size)
+        .filter(Boolean),
     );
   }, [availableVariants, selectedColor, hasColors, hasSizes, allSizes]);
 
-  // Colors valid for selected size
-  const filteredColors = useMemo(() => {
-    if (!hasColors) return [];
+  // Check which colors are available for the selected size
+  const availableColorsForSize = useMemo(() => {
+    if (!hasColors || !hasSizes || !selectedSize) return new Set(allColors);
 
-    if (!hasSizes || !selectedSize) return allColors;
-
-    return Array.from(
-      new Set(
-        availableVariants
-          .filter((v) => v.size === selectedSize)
-          .map((v) => v.color)
-          .filter(Boolean),
-      ),
+    return new Set(
+      availableVariants
+        .filter((v) => v.size === selectedSize)
+        .map((v) => v.color)
+        .filter(Boolean),
     );
   }, [availableVariants, selectedSize, hasColors, hasSizes, allColors]);
+
+  // Handle color selection with auto-adjustment
+  const handleColorSelect = (color: string) => {
+    setSelectedColor(color);
+
+    // If the current size is not available for this color, auto-select the first available size
+    if (hasSizes && selectedSize) {
+      const sizesForColor = availableVariants
+        .filter((v) => v.color === color)
+        .map((v) => v.size)
+        .filter(Boolean);
+
+      if (!sizesForColor.includes(selectedSize)) {
+        setSelectedSize(sizesForColor[0]!);
+      }
+    }
+  };
+
+  // Handle size selection with auto-adjustment
+  const handleSizeSelect = (size: string) => {
+    setSelectedSize(size);
+
+    // If the current color is not available for this size, auto-select the first available color
+    if (hasColors && selectedColor) {
+      const colorsForSize = availableVariants
+        .filter((v) => v.size === size)
+        .map((v) => v.color)
+        .filter(Boolean);
+
+      if (!colorsForSize.includes(selectedColor)) {
+        setSelectedColor(colorsForSize[0]!);
+      }
+    }
+  };
 
   // Auto-select valid combination
   useEffect(() => {
@@ -106,15 +132,21 @@ const ProductSelector = ({
         <div>
           <div className="mb-3 font-medium">Available Sizes</div>
           <div className="flex gap-3">
-            {filteredSizes.map((size) => (
-              <Button
-                key={size}
-                variant={size === selectedSize ? 'default' : 'outline'}
-                onClick={() => setSelectedSize(size!)}
-              >
-                {size}
-              </Button>
-            ))}
+            {allSizes.map((size) => {
+              const isAvailable = availableSizesForColor.has(size);
+              const isSelected = size === selectedSize;
+
+              return (
+                <Button
+                  key={size}
+                  variant={isSelected ? 'default' : 'outline'}
+                  onClick={() => handleSizeSelect(size!)}
+                  className={clsx(!isAvailable && 'opacity-40')}
+                >
+                  {size}
+                </Button>
+              );
+            })}
           </div>
         </div>
       )}
@@ -124,7 +156,8 @@ const ProductSelector = ({
         <div>
           <div className="mb-3 font-medium">Available Color</div>
           <div className="flex gap-3">
-            {filteredColors.map((color) => {
+            {allColors.map((color) => {
+              const isAvailable = availableColorsForSize.has(color);
               const isSelected = selectedColor === color;
 
               return (
@@ -132,13 +165,14 @@ const ProductSelector = ({
                   key={color}
                   size="icon"
                   variant={color === selectedColor ? 'default' : 'outline'}
-                  onClick={() => setSelectedColor(color!)}
+                  onClick={() => handleColorSelect(color!)}
                   style={{ backgroundColor: color! }}
                   className={clsx(
                     'h-8 w-8 cursor-pointer rounded-full border transition',
                     isSelected
                       ? 'ring-accent-foreground border-transparent ring-1 ring-offset-1'
                       : 'border-gray-300',
+                    !isAvailable && 'opacity-40',
                   )}
                 ></Button>
               );

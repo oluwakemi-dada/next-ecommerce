@@ -1,4 +1,4 @@
-import { Control, FieldArrayWithId } from 'react-hook-form';
+import { Control, FieldArrayWithId, UseFormReturn } from 'react-hook-form';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { FieldGroup } from '@/components/ui/field';
@@ -8,6 +8,7 @@ import { VariantFormFields } from './variant-form-fields';
 type VariantsSectionProps = {
   fields: FieldArrayWithId<any, 'variants', 'id'>[];
   control: Control<any>;
+  form: UseFormReturn<any>;
   hasVariants: boolean;
   selectedCategory: string;
   onAddVariant: () => void;
@@ -17,6 +18,7 @@ type VariantsSectionProps = {
 const VariantSection = ({
   fields,
   control,
+  form,
   hasVariants,
   selectedCategory,
   onAddVariant,
@@ -50,6 +52,7 @@ const VariantSection = ({
           <VariantFormFields
             key={field.id}
             index={index}
+            form={form}
             control={control}
             selectedCategory={selectedCategory}
             onRemove={() => onRemoveVariant(index)}

@@ -1,5 +1,5 @@
 import { X } from 'lucide-react';
-import { Controller, Control } from 'react-hook-form';
+import { Controller, Control, UseFormReturn } from 'react-hook-form';
 import { HexColorPicker } from 'react-colorful';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,11 +19,16 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { getSizesForCategory, parseNumberInput } from '@/lib/utils';
+import { Card, CardContent } from '@/components/ui/card';
+import Image from 'next/image';
+import { UploadButton } from '@/lib/uploadthing';
+import { toast } from 'sonner';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type VariantFormFieldsProps = {
   index: number;
   control: Control<any>;
+  form: UseFormReturn<any>;
   selectedCategory: string;
   onRemove: () => void;
 };
@@ -31,6 +36,7 @@ type VariantFormFieldsProps = {
 export const VariantFormFields = ({
   index,
   control,
+  form,
   selectedCategory,
   onRemove,
 }: VariantFormFieldsProps) => {
@@ -191,6 +197,51 @@ export const VariantFormFields = ({
         />
 
         {/* Image URL */}
+        <div className="upload-field col-span-2">
+          <Controller
+            name={`variants.${index}.image`}
+            control={control}
+            render={({ fieldState }) => {
+              const variantImage = form.watch(`variants.${index}.image`);
+
+              return (
+                <Field className="w-full">
+                  <Label>Image</Label>
+                  <Card className="py-0">
+                    <CardContent className="mt-2 min-h-48 space-y-2">
+                      <div className="flex-start space-x-2">
+                        {variantImage && (
+                          <Image
+                            src={variantImage}
+                            alt="product image"
+                            className="h-20 w-20 rounded-sm object-cover object-center"
+                            width={100}
+                            height={100}
+                          />
+                        )}
+                        <UploadButton
+                          endpoint="imageUploader"
+                          onClientUploadComplete={(res: { url: string }[]) => {
+                            form.setValue(
+                              `variants.${index}.image`,
+                              res[0].url,
+                            );
+                          }}
+                          onUploadError={(error: Error) => {
+                            toast.error(`ERROR! ${error.message}`);
+                          }}
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              );
+            }}
+          />
+        </div>
       </div>
 
       {/* Is Active Checkbox */}

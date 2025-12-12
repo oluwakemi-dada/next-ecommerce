@@ -1,13 +1,14 @@
 'use client';
 import z from 'zod';
 import { updateProductSchema } from '@/lib/validators';
-import {  FieldGroup } from '../../ui/field';
+import { FieldGroup } from '../../ui/field';
 import { useProductForm } from '@/hooks/useProductForm';
 import VariantSection from './variant-section';
 import SubmitButton from './submit-button';
 import BasicInfoFields from './basic-info-fields';
 import PricingFields from './pricing-fields';
 import DescriptionField from './description-field';
+import ImagesField from './images-field';
 
 type ProductFormProps = {
   type: 'Create' | 'Update';
@@ -18,6 +19,7 @@ type ProductFormProps = {
 const ProductForm = ({ type, product, productId }: ProductFormProps) => {
   const {
     form,
+    images,
     selectedCategory,
     hasVariants,
     fields,
@@ -38,7 +40,7 @@ const ProductForm = ({ type, product, productId }: ProductFormProps) => {
 
       <FieldGroup>
         <div className="upload-field flex flex-col gap-5 md:flex-row">
-          {/* Images */}
+          <ImagesField form={form} control={form.control} />
         </div>
       </FieldGroup>
 
@@ -51,6 +53,7 @@ const ProductForm = ({ type, product, productId }: ProductFormProps) => {
       <VariantSection
         fields={fields}
         control={form.control}
+        form={form}
         hasVariants={hasVariants}
         selectedCategory={selectedCategory}
         onAddVariant={handleAddVariant}
