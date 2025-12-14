@@ -9,6 +9,7 @@ import BasicInfoFields from './basic-info-fields';
 import PricingFields from './pricing-fields';
 import DescriptionField from './description-field';
 import ImagesField from './images-field';
+import FeaturedFields from './featured-fields';
 
 type ProductFormProps = {
   type: 'Create' | 'Update';
@@ -19,7 +20,6 @@ type ProductFormProps = {
 const ProductForm = ({ type, product, productId }: ProductFormProps) => {
   const {
     form,
-    images,
     selectedCategory,
     hasVariants,
     fields,
@@ -38,15 +38,9 @@ const ProductForm = ({ type, product, productId }: ProductFormProps) => {
 
       <PricingFields control={form.control} hasVariants={hasVariants} />
 
-      <FieldGroup>
-        <div className="upload-field flex flex-col gap-5 md:flex-row">
-          <ImagesField form={form} control={form.control} />
-        </div>
-      </FieldGroup>
+      <ImagesField form={form} control={form.control} />
 
-      <FieldGroup>
-        <div className="upload-field">{/* isFeatured */}</div>
-      </FieldGroup>
+      <FeaturedFields control={form.control} form={form} />
 
       <DescriptionField control={form.control} />
 
