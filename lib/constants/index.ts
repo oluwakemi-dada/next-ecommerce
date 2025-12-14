@@ -1,3 +1,6 @@
+import z from "zod";
+import { insertProductSchema, variantInputSchema } from "../validators";
+
 export const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME || 'Prostore';
 export const APP_DESCRIPTION =
   process.env.NEXT_PUBLIC_APP_DESCRIPTION ||
@@ -36,7 +39,7 @@ export const DEFAULT_PAYMENT_METHOD = process.env.DEFAULT_PAYMENT_METHOD
 
 export const PAGE_SIZE = Number(process.env.PAGE_SIZE) || 12;
 
-export const productDefaultValues = {
+export const productDefaultValues: z.infer<typeof insertProductSchema> = {
   name: '',
   slug: '',
   category: '',
@@ -52,7 +55,7 @@ export const productDefaultValues = {
   variants: [],
 };
 
-export const variantDefaultValues = {
+export const variantDefaultValues: z.infer<typeof variantInputSchema> = {
   color: null,
   size: null,
   stock: 0,
