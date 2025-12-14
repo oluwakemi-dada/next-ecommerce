@@ -3,6 +3,7 @@ import z from 'zod';
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/db/prisma';
 import {
+  convertToPlainObject,
   formatError,
   generateVariantSKU,
   serializeProduct,
@@ -34,6 +35,18 @@ export const getProductBySlug = async (slug: string) => {
 
   // Convert Decimal fields to string
   return JSON.parse(JSON.stringify(serializeProduct(product)));
+};
+
+// Get single product by it's ID (admin)
+export const getProductById = async (productId: string) => {
+  const data = await prisma.product.findFirst({
+    where: { id: productId },
+    include: { variants: true },
+  });
+
+  if (!data) return null;
+
+  return convertToPlainObject(data);
 };
 
 // Get all products (for static params)

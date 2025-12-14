@@ -20,7 +20,7 @@ const FeaturedFields = ({ control, form }: ImagesFieldProps) => {
   return (
     <div className="upload-field">
       <div className="mb-2 text-sm font-medium">Featured Product</div>
-      <Card className="py-3">
+      <Card className="pt-3 pb-5">
         <CardContent className="mt-2 space-y-2">
           <FieldGroup>
             <Controller
@@ -29,7 +29,7 @@ const FeaturedFields = ({ control, form }: ImagesFieldProps) => {
               render={({ field, fieldState }) => (
                 <Field
                   orientation="horizontal"
-                  className="items-center space-x-2 -mb-3"
+                  className="items-center space-x-2"
                 >
                   <Checkbox
                     checked={field.value}
