@@ -47,7 +47,7 @@ export const authConfig = {
 
             const token = await decode({
               token: tokenValue,
-              secret: process.env.NEXTAUTH_SECRET!,
+              secret: process.env.AUTH_SECRET!,
               salt,
             });
 
