@@ -23,7 +23,7 @@ const AdminUsersPage = async (props: AdminUserPageProps) => {
   const pageNumber = Number(searchParams.page) || 1;
   const searchText = searchParams.query || '';
 
-  const users = await getAllUsers({ page: pageNumber });
+  const users = await getAllUsers({ page: pageNumber, query: searchText });
 
   return (
     <div className="space-y-2">
