@@ -46,7 +46,7 @@ const OrdersTable = async ({
                 <TableHead>TOTAL</TableHead>
                 <TableHead>PAID</TableHead>
                 <TableHead>DELIVERED</TableHead>
-                <TableHead>ACTIONS</TableHead>
+                <TableHead className="w-[100px]">ACTIONS</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -68,7 +68,7 @@ const OrdersTable = async ({
                       ? formatDateTime(order.deliveredAt).dateTime
                       : 'Not Delivered'}
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="flex gap-1 pt-[11px]">
                     <Button asChild variant="outline" size="sm">
                       <Link href={`/order/${order.id}`}>
                         <span className="px-2">Details</span>

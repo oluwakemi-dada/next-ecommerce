@@ -27,7 +27,7 @@ const UsersTable = ({ users }: UsersTable) => {
           <TableHead>NAME</TableHead>
           <TableHead>EMAIL</TableHead>
           <TableHead>ROLE</TableHead>
-          <TableHead className="w-[200px] text-end">ACTIONS</TableHead>
+          <TableHead className="w-[100px]">ACTIONS</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -43,13 +43,11 @@ const UsersTable = ({ users }: UsersTable) => {
                 <Badge variant="default">Admin</Badge>
               )}
             </TableCell>
-            <TableCell className="w-[200px]">
-              <div className="flex w-full flex-row justify-end">
-                <Button asChild variant="outline" size="sm">
-                  <Link href={`/admin/users/${user.id}`}>Edit</Link>
-                </Button>
-                <DeleteDialog id={user.id} action={deleteUser} />
-              </div>
+            <TableCell className="flex gap-1 pt-[11px]">
+              <Button asChild variant="outline" size="sm">
+                <Link href={`/admin/users/${user.id}`}>Edit</Link>
+              </Button>
+              <DeleteDialog id={user.id} action={deleteUser} />
             </TableCell>
           </TableRow>
         ))}
