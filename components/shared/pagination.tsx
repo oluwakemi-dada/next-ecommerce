@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { cn, formUrlQuery, generatePagination } from '@/lib/utils';
 import { Button } from '../ui/button';
 
@@ -12,11 +12,13 @@ type PaginationProps = {
 
 const createPageURL = (
   pageNumber: number | string,
+  pathname: string,
   searchParams: URLSearchParams,
   urlParamName?: string,
 ) => {
   return formUrlQuery({
     params: searchParams.toString(),
+    pathname,
     key: urlParamName || 'page',
     value: pageNumber.toString(),
   });
@@ -60,6 +62,7 @@ const Pagination = ({
 }: PaginationProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const pathname = usePathname();
 
   const handleClick = (btnType: string) => {
     const pageValue =
@@ -67,6 +70,7 @@ const Pagination = ({
 
     const newUrl = formUrlQuery({
       params: searchParams.toString(),
+      pathname,
       key: urlParamName || 'page',
       value: pageValue.toString(),
     });
@@ -96,7 +100,12 @@ const Pagination = ({
         if (allPages.length === 1) position = 'single';
         if (page === '...') position = 'middle';
 
-        const pageUrl = createPageURL(page, searchParams, urlParamName);
+        const pageUrl = createPageURL(
+          page,
+          pathname,
+          searchParams,
+          urlParamName,
+        );
 
         return (
           <PaginationNumber

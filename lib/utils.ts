@@ -169,10 +169,12 @@ export const formatDateTime = (dateString: Date) => {
 // Form the pagination links
 export const formUrlQuery = ({
   params,
+  pathname,
   key,
   value,
 }: {
   params: string;
+  pathname: string;
   key: string;
   value: string | null;
 }) => {
@@ -182,7 +184,7 @@ export const formUrlQuery = ({
 
   return qs.stringifyUrl(
     {
-      url: window.location.pathname,
+      url: pathname,
       query,
     },
     {
