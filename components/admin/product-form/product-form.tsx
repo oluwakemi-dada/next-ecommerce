@@ -1,7 +1,6 @@
 'use client';
 import z from 'zod';
 import { updateProductSchema } from '@/lib/validators';
-import { FieldGroup } from '../../ui/field';
 import { useProductForm } from '@/hooks/useProductForm';
 import VariantSection from './variant-section';
 import SubmitButton from './submit-button';
