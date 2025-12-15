@@ -1,6 +1,8 @@
 'use server';
 import { ZodError, z } from 'zod';
 import { hashSync } from 'bcrypt-ts-edge';
+import { revalidatePath } from 'next/cache';
+import { cookies } from 'next/headers';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
 import { auth, signIn } from '@/auth';
 import { prisma } from '@/db/prisma';
@@ -9,12 +11,11 @@ import {
   signInFormSchema,
   signUpFormSchema,
   paymentMethodSchema,
+  updateUserSchema,
 } from '../validators';
-import { formatError } from '../utils';
 import { ShippingAddress } from '@/types';
-import { cookies } from 'next/headers';
+import { formatError } from '../utils';
 import { PAGE_SIZE } from '../constants';
-import { revalidatePath } from 'next/cache';
 
 // Sign in the user with credentials
 export const signInWithCredentials = async (
@@ -285,5 +286,27 @@ export const deleteUser = async (id: string) => {
       success: false,
       message: formatError(error),
     };
+  }
+};
+
+// Update a user
+export const updateUser = async (user: z.infer<typeof updateUserSchema>) => {
+  try {
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        name: user.name,
+        role: user.role,
+      },
+    });
+
+    revalidatePath('/admin/users');
+
+    return {
+      success: true,
+      message: 'User updated successfully',
+    };
+  } catch (error) {
+    return { success: false, message: formatError(error) };
   }
 };

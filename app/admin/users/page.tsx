@@ -25,9 +25,6 @@ const AdminUsersPage = async (props: AdminUserPageProps) => {
 
   const users = await getAllUsers({ page: pageNumber });
 
-  console.log(users);
-  
-
   return (
     <div className="space-y-2">
       <UsersHeader searchText={searchText} />
