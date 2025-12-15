@@ -10,10 +10,10 @@ type OrdersPageProps = {
 
 const OrdersPage = async ({ searchParams }: OrdersPageProps) => {
   const { page } = await searchParams;
-  const pageNumber = Number(page);
+  const pageNumber = Number(page) || 1;
 
   const ordersResponse = await getMyOrders({
-    page: pageNumber || 1,
+    page: pageNumber,
   });
 
   const isInvalidPage =
@@ -35,7 +35,7 @@ const OrdersPage = async ({ searchParams }: OrdersPageProps) => {
 
       {ordersResponse.totalPages > 1 && (
         <Pagination
-          currentPage={pageNumber || 1}
+          currentPage={pageNumber}
           totalPages={ordersResponse?.totalPages}
         />
       )}

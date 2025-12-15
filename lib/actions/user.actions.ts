@@ -13,6 +13,8 @@ import {
 import { formatError } from '../utils';
 import { ShippingAddress } from '@/types';
 import { cookies } from 'next/headers';
+import { PAGE_SIZE } from '../constants';
+import { revalidatePath } from 'next/cache';
 
 // Sign in the user with credentials
 export const signInWithCredentials = async (
@@ -108,6 +110,18 @@ export const signUpUser = async (prevState: unknown, formData: FormData) => {
 export const getUserById = async (userId: string) => {
   const user = await prisma.user.findFirst({
     where: { id: userId },
+    select: {
+      name: true,
+      email: true,
+      id: true,
+      createdAt: true,
+      updatedAt: true,
+      image: true,
+      paymentMethod: true,
+      emailVerified: true,
+      role: true,
+      address: true,
+    },
   });
 
   if (!user) throw new Error('User not found');
@@ -225,4 +239,32 @@ export const updateProfile = async (user: { name: string; email: string }) => {
   } catch (error) {
     return { success: false, message: formatError(error) };
   }
+};
+
+// Get all the users
+export const getAllUsers = async ({
+  limit = PAGE_SIZE,
+  page,
+}: {
+  limit?: number;
+  page: number;
+}) => {
+  const data = await prisma.user.findMany({
+    orderBy: { createdAt: 'desc' },
+    take: limit,
+    skip: (page - 1) * limit,
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+    },
+  });
+
+  const dataCount = await prisma.user.count();
+
+  return {
+    data,
+    totalPages: Math.ceil(dataCount / limit),
+  };
 };

@@ -19,7 +19,7 @@ const AdminOrdersPage = async ({ searchParams }: AdminOrdersPageProps) => {
   await requireAdmin();
 
   const { page = 1 } = await searchParams;
-  const pageNumber = Number(page);
+  const pageNumber = Number(page) || 1;
 
   const ordersResponse = await getAllOrders({
     page: Number(page),
@@ -51,7 +51,7 @@ const AdminOrdersPage = async ({ searchParams }: AdminOrdersPageProps) => {
 
         {ordersResponse.totalPages > 1 && (
           <Pagination
-            currentPage={pageNumber || 1}
+            currentPage={pageNumber}
             totalPages={ordersResponse?.totalPages}
           />
         )}

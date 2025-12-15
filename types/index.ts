@@ -62,3 +62,13 @@ export type Summary = {
   latestSales: LatestSale[];
   salesData: MonthlySale[];
 };
+
+export type Users = {
+  data: {
+    name: string;
+    email: string;
+    id: string;
+    role: string;
+  }[];
+  totalPages: number;
+};
