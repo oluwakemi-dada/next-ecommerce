@@ -1,5 +1,5 @@
-import z from "zod";
-import { insertProductSchema, variantInputSchema } from "../validators";
+import z from 'zod';
+import { insertProductSchema, variantInputSchema } from '../validators';
 
 export const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME || 'Prostore';
 export const APP_DESCRIPTION =
@@ -63,6 +63,10 @@ export const variantDefaultValues: z.infer<typeof variantInputSchema> = {
   image: null,
   isActive: true,
 };
+
+export const USER_ROLES = process.env.USER_ROLES
+  ? process.env.USER_ROLES.split(', ')
+  : ['admin', 'user'];
 
 export const PRODUCT_CATEGORIES = {
   CLOTHING_MENS: {
