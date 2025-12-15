@@ -12,7 +12,7 @@ type AdminUserPageProps = {
   }>;
 };
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Admin Users',
 };
 

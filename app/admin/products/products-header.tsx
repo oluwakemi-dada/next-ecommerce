@@ -14,7 +14,7 @@ const ProductsHeader = ({ searchText }: ProductsHeaderProps) => {
           <div>
             Filtered by <i>&quot;{searchText}&quot;</i>{' '}
             <Link href="/admin/products">
-              <Button variant="outline" size="sm" className="cursor-pointer">
+              <Button variant="outline" size="sm" className="cursor-pointer ml-3">
                 Remove Filter
               </Button>
             </Link>
