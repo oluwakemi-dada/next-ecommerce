@@ -1,13 +1,14 @@
 import { Metadata } from 'next';
-import { getAllOrders } from '@/lib/actions/order.actions';
-import { requireAdmin } from '@/lib/auth-guard';
-
 import Pagination from '@/components/shared/pagination';
 import OrdersTable from '@/components/shared/order/orders-table';
+import ActiveFilter from '@/components/admin/active-filter';
+import { getAllOrders } from '@/lib/actions/order.actions';
+import { requireAdmin } from '@/lib/auth-guard';
 
 type AdminOrdersPageProps = {
   searchParams: Promise<{
     page: string;
+    query: string;
   }>;
 };
 
@@ -18,11 +19,13 @@ export const metadata: Metadata = {
 const AdminOrdersPage = async ({ searchParams }: AdminOrdersPageProps) => {
   await requireAdmin();
 
-  const { page = 1 } = await searchParams;
+  const { page = 1 , query: searchText} = await searchParams;
   const pageNumber = Number(page) || 1;
+
 
   const ordersResponse = await getAllOrders({
     page: Number(page),
+    query: searchText,
   });
 
   const isInvalidPage =
@@ -32,6 +35,7 @@ const AdminOrdersPage = async ({ searchParams }: AdminOrdersPageProps) => {
     <div className="space-y-2">
       <div className="flex items-center gap-3">
         <h1 className="h2-bold">Orders</h1>
+        <ActiveFilter searchText={searchText} />
       </div>
       <div className="overflow-x-auto">
         {isInvalidPage ? (

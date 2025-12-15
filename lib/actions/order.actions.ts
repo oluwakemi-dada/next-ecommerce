@@ -1,5 +1,5 @@
 'use server';
-import { Prisma } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
 import { auth } from '@/auth';
@@ -441,11 +441,29 @@ export const getOrderSummary = async () => {
 export const getAllOrders = async ({
   limit = PAGE_SIZE,
   page,
+  query,
 }: {
   limit?: number;
   page: number;
+  query: string;
 }) => {
+  const queryFilter: Prisma.OrderWhereInput =
+  // Query filter
+    query && query !== 'all'
+      ? {
+          user: {
+            name: {
+              contains: query,
+              mode: 'insensitive',
+            } as Prisma.StringFilter,
+          },
+        }
+      : {};
+
   const data = await prisma.order.findMany({
+    where: {
+      ...queryFilter,
+    },
     orderBy: {
       createdAt: 'desc',
     },
