@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import ActiveFilter from '@/components/admin/active-filter';
+import TableHeader from '@/components/admin/table-header';
 
 type ProductsHeaderProps = {
   searchText: string;
@@ -9,10 +9,7 @@ type ProductsHeaderProps = {
 const ProductsHeader = ({ searchText }: ProductsHeaderProps) => {
   return (
     <div className="flex-between">
-      <div className="flex items-center gap-3">
-        <h1 className="h2-bold">Products</h1>
-        <ActiveFilter searchText={searchText} />
-      </div>
+      <TableHeader title="Products" searchText={searchText} />
       <Button asChild variant="default">
         <Link href="/admin/products/create">Create Product</Link>
       </Button>

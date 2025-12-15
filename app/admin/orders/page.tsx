@@ -1,9 +1,10 @@
 import { Metadata } from 'next';
 import Pagination from '@/components/shared/pagination';
 import OrdersTable from '@/components/shared/order/orders-table';
-import ActiveFilter from '@/components/admin/active-filter';
 import { getAllOrders } from '@/lib/actions/order.actions';
 import { requireAdmin } from '@/lib/auth-guard';
+import TableHeader from '@/components/admin/table-header';
+import InvalidPage from '@/components/admin/invalid-page';
 
 type AdminOrdersPageProps = {
   searchParams: Promise<{
@@ -19,9 +20,8 @@ export const metadata: Metadata = {
 const AdminOrdersPage = async ({ searchParams }: AdminOrdersPageProps) => {
   await requireAdmin();
 
-  const { page = 1 , query: searchText} = await searchParams;
+  const { page = 1, query: searchText } = await searchParams;
   const pageNumber = Number(page) || 1;
-
 
   const ordersResponse = await getAllOrders({
     page: Number(page),
@@ -33,17 +33,10 @@ const AdminOrdersPage = async ({ searchParams }: AdminOrdersPageProps) => {
 
   return (
     <div className="space-y-2">
-      <div className="flex items-center gap-3">
-        <h1 className="h2-bold">Orders</h1>
-        <ActiveFilter searchText={searchText} />
-      </div>
+      <TableHeader title="Orders" searchText={searchText} />
       <div className="overflow-x-auto">
         {isInvalidPage ? (
-          <div className="py-8 text-center">
-            Page <strong>{pageNumber}</strong> not found.
-            <br />
-            Please select a valid page from the pagination below.
-          </div>
+          <InvalidPage pageNumber={pageNumber} />
         ) : (
           <OrdersTable
             orders={ordersResponse.data}

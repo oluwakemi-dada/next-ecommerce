@@ -3,7 +3,8 @@ import Pagination from '@/components/shared/pagination';
 import { getAllUsers } from '@/lib/actions/user.actions';
 import { requireAdmin } from '@/lib/auth-guard';
 import UsersTable from './users-table';
-import UsersHeader from './users-header';
+import TableHeader from '@/components/admin/table-header';
+import InvalidPage from '@/components/admin/invalid-page';
 
 type AdminUserPageProps = {
   searchParams: Promise<{
@@ -25,12 +26,18 @@ const AdminUsersPage = async (props: AdminUserPageProps) => {
 
   const users = await getAllUsers({ page: pageNumber, query: searchText });
 
+  const isInvalidPage = users.totalPages > 0 && pageNumber > users.totalPages;
+
   return (
     <div className="space-y-2">
-      <UsersHeader searchText={searchText} />
+      <TableHeader title="Users" searchText={searchText} />
 
       <div className="overflow-x-auto">
-        <UsersTable users={users} />
+        {isInvalidPage ? (
+          <InvalidPage pageNumber={pageNumber} />
+        ) : (
+          <UsersTable users={users} />
+        )}
 
         {users.totalPages > 1 && (
           <Pagination currentPage={pageNumber} totalPages={users?.totalPages} />
