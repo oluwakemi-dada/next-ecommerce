@@ -36,7 +36,7 @@ const AdminProductsPage = async (props: AdminProductsPageProps) => {
       <ProductsHeader searchText={searchText} />
       <div className="overflow-x-auto">
         {isInvalidPage ? (
-          <InvalidPage pageNumber={pageNumber} />
+          <InvalidPage pageNumber={pageNumber} href="/admin/products" />
         ) : (
           <ProductsTable products={products.data} />
         )}

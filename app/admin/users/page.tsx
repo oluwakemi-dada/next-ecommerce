@@ -34,7 +34,7 @@ const AdminUsersPage = async (props: AdminUserPageProps) => {
 
       <div className="overflow-x-auto">
         {isInvalidPage ? (
-          <InvalidPage pageNumber={pageNumber} />
+          <InvalidPage pageNumber={pageNumber} href="/admin/users" />
         ) : (
           <UsersTable users={users} />
         )}

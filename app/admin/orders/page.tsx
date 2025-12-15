@@ -36,7 +36,7 @@ const AdminOrdersPage = async ({ searchParams }: AdminOrdersPageProps) => {
       <TableHeader title="Orders" searchText={searchText} />
       <div className="overflow-x-auto">
         {isInvalidPage ? (
-          <InvalidPage pageNumber={pageNumber} />
+          <InvalidPage pageNumber={pageNumber} href="/admin/orders" />
         ) : (
           <OrdersTable
             orders={ordersResponse.data}
