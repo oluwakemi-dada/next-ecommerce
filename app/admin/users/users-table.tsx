@@ -10,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { deleteUser } from '@/lib/actions/user.actions';
 import { formatId } from '@/lib/utils';
 import { Users } from '@/types';
 
@@ -26,7 +27,7 @@ const UsersTable = ({ users }: UsersTable) => {
           <TableHead>NAME</TableHead>
           <TableHead>EMAIL</TableHead>
           <TableHead>ROLE</TableHead>
-          <TableHead>ACTIONS</TableHead>
+          <TableHead className="w-[200px] text-end">ACTIONS</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -42,10 +43,13 @@ const UsersTable = ({ users }: UsersTable) => {
                 <Badge variant="default">Admin</Badge>
               )}
             </TableCell>
-            <TableCell>
-              <Button asChild variant="outline" size="sm">
-                <Link href={`/admin/users/${user.id}`}>Edit</Link>
-              </Button>
+            <TableCell className="w-[200px]">
+              <div className="flex w-full flex-row justify-end">
+                <Button asChild variant="outline" size="sm">
+                  <Link href={`/admin/users/${user.id}`}>Edit</Link>
+                </Button>
+                <DeleteDialog id={user.id} action={deleteUser} />
+              </div>
             </TableCell>
           </TableRow>
         ))}

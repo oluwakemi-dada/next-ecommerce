@@ -268,3 +268,22 @@ export const getAllUsers = async ({
     totalPages: Math.ceil(dataCount / limit),
   };
 };
+
+// Delete a user
+export const deleteUser = async (id: string) => {
+  try {
+    await prisma.user.delete({ where: { id } });
+
+    revalidatePath('/admin/users');
+
+    return {
+      success: true,
+      message: 'User deleted successfully',
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: formatError(error),
+    };
+  }
+};
