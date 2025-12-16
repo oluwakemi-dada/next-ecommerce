@@ -251,3 +251,29 @@ export const updateProduct = async (
     return { success: false, message: formatError(error) };
   }
 };
+
+// Get all categories
+export const getAllCategories = async () => {
+  const data = await prisma.product.groupBy({
+    by: ['category'],
+    _count: true,
+  });
+
+  return data;
+};
+
+// Get featured products
+export const getFeaturedProducts = async () => {
+  const data = await prisma.product.findMany({
+    where: {
+      isFeatured: true,
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+    take: 4,
+    include: { variants: true },
+  });
+
+  return convertToPlainObject(data);
+};
