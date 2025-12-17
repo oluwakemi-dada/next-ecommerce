@@ -101,7 +101,7 @@ const BasicInfoFields = ({ control, form }: BasicInfoFieldsProps) => {
                 </SelectTrigger>
                 <SelectContent>
                   {CATEGORY_OPTIONS.map((category) => (
-                    <SelectItem key={category.value} value={category.value}>
+                    <SelectItem key={category.value} value={category.label}>
                       {category.label}
                     </SelectItem>
                   ))}

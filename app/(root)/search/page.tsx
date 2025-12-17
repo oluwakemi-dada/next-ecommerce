@@ -9,10 +9,18 @@ type SearchPageProps = {
     q: string;
     category?: string;
     price?: string;
-    rating?: string;
     sort?: string;
+    rating?: string;
     page: string;
   }>;
+};
+
+export type GetFilterUrlProps = {
+  c?: string;
+  p?: string;
+  s?: string;
+  r?: string;
+  pg?: string;
 };
 
 const SearchPage = async (props: SearchPageProps) => {
@@ -24,8 +32,27 @@ const SearchPage = async (props: SearchPageProps) => {
     sort = 'newest',
     page,
   } = await props.searchParams;
-
   const pageNumber = Number(page) || 1;
+
+  // Construct filter url
+  const getFilterUrl = ({ c, p, r, s, pg }: GetFilterUrlProps) => {
+    const params = {
+      q,
+      category,
+      price,
+      sort,
+      rating,
+      page: page || '1',
+    };
+
+    if (c) params.category = c;
+    if (p) params.price = p;
+    if (s) params.sort = s;
+    if (r) params.rating = r;
+    if (pg) params.page = pg;
+
+    return `/search?${new URLSearchParams(params).toString()}`;
+  };
 
   return (
     <div className="grid md:grid-cols-5 md:gap-5">
@@ -34,7 +61,7 @@ const SearchPage = async (props: SearchPageProps) => {
           category={category}
           price={price}
           rating={rating}
-          // getFilterUrl={getFilterUrl}
+          getFilterUrl={getFilterUrl}
         />
       </Suspense>
 
@@ -45,7 +72,7 @@ const SearchPage = async (props: SearchPageProps) => {
           price={price}
           rating={rating}
           sort={sort}
-          // getFilterUrl={getFilterUrl}
+          getFilterUrl={getFilterUrl}
         />
 
         <Suspense fallback={<Loader />}>
