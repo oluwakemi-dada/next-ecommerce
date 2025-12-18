@@ -64,6 +64,12 @@ export const variantDefaultValues: z.infer<typeof variantInputSchema> = {
   isActive: true,
 };
 
+export const reviewFormDefaultValues = {
+  title: '',
+  comment: '',
+  rating: 0,
+};
+
 export const USER_ROLES = process.env.USER_ROLES
   ? process.env.USER_ROLES.split(', ')
   : ['admin', 'user'];

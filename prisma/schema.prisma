@@ -25,6 +25,7 @@ model Product {
   updatedAt   DateTime         @default(now()) @updatedAt
   variants    ProductVariant[]
   orderitems  OrderItem[]
+  reviews     Review[]
 
   @@index([category])
   @@index([isFeatured])
@@ -66,6 +67,7 @@ model User {
   session       Session[]
   cart          Cart[]
   orders        Order[]
+  reviews       Review[]
 }
 
 model Account {
@@ -159,4 +161,17 @@ model OrderItem {
   @@index([orderId])
   @@index([productId])
   @@index([variantId])
+}
+
+model Review {
+  id                 String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId             String   @db.Uuid
+  productId          String   @db.Uuid
+  rating             Int
+  title              String
+  description        String
+  isVerifiedPurchase Boolean  @default(true)
+  createdAt          DateTime @default(now()) @db.Timestamp(6)
+  product            Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
