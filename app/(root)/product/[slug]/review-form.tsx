@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import z from 'zod';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
@@ -21,6 +21,7 @@ import {
   FieldGroup,
   FieldLabel,
 } from '@/components/ui/field';
+import { createUpdateReview } from '@/lib/actions/review.actions';
 import { insertReviewSchema } from '@/lib/validators';
 import { reviewFormDefaultValues } from '@/lib/constants';
 import { Label } from '@/components/ui/label';
@@ -36,7 +37,7 @@ import { StarIcon } from 'lucide-react';
 type ReviewFormProps = {
   userId: string;
   productId: string;
-  onReviewSubmitted?: () => void;
+  onReviewSubmitted: () => void;
 };
 
 const ReviewForm = ({
@@ -51,11 +52,30 @@ const ReviewForm = ({
     defaultValues: reviewFormDefaultValues,
   });
 
+  // Open Form handler
   const handleOpenForm = () => {
+    form.setValue('productId', productId);
+    form.setValue('userId', userId);
+
     setOpen(true);
   };
 
-  const onSubmit = () => {};
+  // Submit Form handker
+  const onSubmit: SubmitHandler<z.infer<typeof insertReviewSchema>> = async (
+    values,
+  ) => {
+    const res = await createUpdateReview({ ...values, productId });
+
+    if (!res.success) {
+      return toast.error(res.message);
+    }
+
+    setOpen(false);
+
+    onReviewSubmitted();
+
+    toast.success(res.message);
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

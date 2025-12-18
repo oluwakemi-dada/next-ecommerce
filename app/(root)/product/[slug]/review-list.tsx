@@ -25,7 +25,9 @@ const ReviewList = ({ productId, productSlug }: ReviewListProps) => {
 
   const [reviews, setReviews] = useState<Review[]>([]);
 
-  const onReviewSubmitted = () => {};
+  const reload = () => {
+    console.log('review submitted');
+  };
 
   return (
     <div className="space-y-4">
@@ -34,7 +36,7 @@ const ReviewList = ({ productId, productSlug }: ReviewListProps) => {
         <ReviewForm
           userId={userId}
           productId={productId}
-          onReviewSubmitted={onReviewSubmitted}
+          onReviewSubmitted={reload}
         />
       ) : (
         <div>
