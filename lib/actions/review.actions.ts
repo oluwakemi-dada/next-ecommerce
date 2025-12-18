@@ -1,11 +1,11 @@
 'use server';
 
-import z from "zod";
-import { prisma } from "@/db/prisma";
-import { auth } from "@/auth";
-import { insertReviewSchema } from "../validators";
-import { revalidatePath } from "next/cache";
-import { formatError } from "../utils";
+import z from 'zod';
+import { prisma } from '@/db/prisma';
+import { auth } from '@/auth';
+import { insertReviewSchema } from '../validators';
+import { revalidatePath } from 'next/cache';
+import { formatError } from '../utils';
 
 // Create & Update Reviews
 export const createUpdateReview = async (
@@ -82,4 +82,43 @@ export const createUpdateReview = async (
   } catch (error) {
     return { success: false, message: formatError(error) };
   }
+};
+
+// Get all reviews for a product
+export const getReviews = async ({ productId }: { productId: string }) => {
+  const data = await prisma.review.findMany({
+    where: {
+      productId: productId,
+    },
+    include: {
+      user: {
+        select: {
+          name: true,
+        },
+      },
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
+
+  return { data };
+};
+
+// Get a review written by the current user
+export const getReviewByProductId = async ({
+  productId,
+}: {
+  productId: string;
+}) => {
+  const session = await auth();
+
+  if (!session) throw new Error('User is not authenticated');
+
+  return await prisma.review.findFirst({
+    where: {
+      productId,
+      userId: session?.user?.id,
+    },
+  });
 };
