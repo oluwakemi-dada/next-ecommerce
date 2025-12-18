@@ -56,14 +56,12 @@ const SearchPage = async (props: SearchPageProps) => {
 
   return (
     <div className="grid md:grid-cols-5 md:gap-5">
-      <Suspense fallback={<Loader />}>
-        <SearchFilters
-          category={category}
-          price={price}
-          rating={rating}
-          getFilterUrl={getFilterUrl}
-        />
-      </Suspense>
+      <SearchFilters
+        category={category}
+        price={price}
+        rating={rating}
+        getFilterUrl={getFilterUrl}
+      />
 
       <div className="space-y-4 md:col-span-4">
         <SearchHeader
