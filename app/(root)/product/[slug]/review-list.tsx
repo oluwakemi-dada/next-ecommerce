@@ -10,9 +10,11 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { getReviews } from '@/lib/actions/review.actions';
 import { formatDateTime } from '@/lib/utils';
 import { Review } from '@/types';
 import ReviewForm from './review-form';
+import Rating from '@/components/shared/product/rating';
 
 type ReviewListProps = {
   productId: string;
@@ -24,6 +26,15 @@ const ReviewList = ({ productId, productSlug }: ReviewListProps) => {
   const userId = session?.user.id;
 
   const [reviews, setReviews] = useState<Review[]>([]);
+
+  useEffect(() => {
+    const loadReviews = async () => {
+      const res = await getReviews({ productId });
+      setReviews(res.data);
+    };
+
+    loadReviews();
+  }, [productId]);
 
   const reload = () => {
     console.log('review submitted');
@@ -51,7 +62,31 @@ const ReviewList = ({ productId, productSlug }: ReviewListProps) => {
         </div>
       )}
 
-      <div className="flex flex-col gap-3"></div>
+      <div className="flex flex-col gap-3">
+        {reviews.map((review) => (
+          <Card key={review.id}>
+            <CardHeader>
+              <div className="flex-between">
+                <CardTitle>{review.title}</CardTitle>
+              </div>
+              <CardDescription>{review.description}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="text-muted-foreground flex space-x-4 text-sm">
+                <Rating value={review.rating} />
+                <div className="flex items-center">
+                  <User className="mr-1 h-3 w-3" />
+                  {review.user ? review.user.name : 'User'}
+                </div>
+                <div className="flex items-center">
+                  <Calendar className="mr-1 h-3 w-3" />
+                  {formatDateTime(review.createdAt).dateTime}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 };

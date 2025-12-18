@@ -1,5 +1,6 @@
 import { Product } from '@/types';
 import ProductPrice from '../../../../components/shared/product/product-price';
+import Rating from '@/components/shared/product/rating';
 
 type ProductInfoProps = {
   product: Product;
@@ -13,8 +14,9 @@ const ProductInfo = ({ product }: ProductInfoProps) => {
           {product.brand} {product.category}
         </p>
         <h1 className="h3-bold">{product.name}</h1>
+        <Rating value={Number(product.rating)} />
         <p>
-          {product.rating} of {product.numReviews} Reviews
+          {product.numReviews} review{product.numReviews > 1 && 's'}
         </p>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <ProductPrice

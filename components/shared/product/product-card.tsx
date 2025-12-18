@@ -3,13 +3,17 @@ import Image from 'next/image';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Product } from '@/types';
 import ProductPrice from './product-price';
+import Rating from './rating';
 
 type ProductCardProps = {
   product: Product;
 };
 
 const ProductCard = ({ product }: ProductCardProps) => {
-const inStock = product.variants.length > 0 ? product.variants.some((variant) => variant.stock > 0) : !!product.stock && product.stock > 0
+  const inStock =
+    product.variants.length > 0
+      ? product.variants.some((variant) => variant.stock > 0)
+      : !!product.stock && product.stock > 0;
 
   return (
     <Card className="w-full max-w-sm">
@@ -30,7 +34,7 @@ const inStock = product.variants.length > 0 ? product.variants.some((variant) =>
           <h2 className="text-sm font-medium">{product.name}</h2>
         </Link>
         <div className="flex-between gap-4">
-          <p>{product.rating} Stars</p>
+          <Rating value={Number(product.rating)} />
           {inStock ? (
             <ProductPrice value={Number(product.price)} />
           ) : (
