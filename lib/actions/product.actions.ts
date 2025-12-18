@@ -1,4 +1,5 @@
 'use server';
+import { cache } from 'react';
 import z from 'zod';
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/db/prisma';
@@ -26,7 +27,7 @@ export const getLatestProducts = async () => {
 };
 
 // Get single product by its slug
-export const getProductBySlug = async (slug: string) => {
+export const getProductBySlug = cache(async (slug: string) => {
   const product = await prisma.product.findFirst({
     where: { slug },
     include: { variants: true },
@@ -36,7 +37,7 @@ export const getProductBySlug = async (slug: string) => {
 
   // Convert Decimal fields to string
   return JSON.parse(JSON.stringify(serializeProduct(product)));
-};
+});
 
 // Get single product by it's ID (admin)
 export const getProductById = async (productId: string) => {

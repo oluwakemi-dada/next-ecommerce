@@ -2,6 +2,7 @@ import { Suspense } from 'react';
 import ProductDetails from '@/app/(root)/product/[slug]/product-details';
 import Loader from '@/components/shared/loader';
 import { getAllProductsRaw } from '@/lib/actions/product.actions';
+import ReviewListWrapper from './review-list-wrapper';
 
 type ProductDetailsPageProps = {
   params: Promise<{ slug: string }>;
@@ -30,6 +31,9 @@ const ProductDetailsPage = async ({ params }: ProductDetailsPageProps) => {
         <Suspense fallback={<Loader />}>
           <ProductDetails slug={slug} />
         </Suspense>
+      </section>
+      <section className="mt-10">
+        <ReviewListWrapper productSlug={slug} />
       </section>
     </>
   );
