@@ -8,6 +8,8 @@ import { ShippingAddress } from '@/types';
 import PayPalPayment from './paypal-payment';
 import { auth } from '@/auth';
 import { MarkAsPaidButton, MarkAsDeliveredButton } from './admin-order-buttons';
+import StripePayment from './stripe-payment';
+import Stripe from 'stripe';
 
 type OrderDetailsViewProps = {
   id: string;
@@ -22,48 +24,53 @@ const OrderDetailsView = async ({ id }: OrderDetailsViewProps) => {
 
   if (!order) notFound();
 
-  const {
-    user,
-    shippingAddress,
-    orderitems,
-    itemsPrice,
-    shippingPrice,
-    taxPrice,
-    totalPrice,
-    paymentMethod,
-    isDelivered,
-    isPaid,
-    paidAt,
-    deliveredAt,
-  } = order;
+  let client_secret = null;
+
+  // Check if is not paid and using stripe
+  if (order.paymentMethod === 'Stripe' && !order.isPaid) {
+    // Init stripe instance
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
+    // Create payment intent
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: Math.round(Number(order.totalPrice) * 100),
+      currency: 'USD',
+      metadata: { orderId: order.id },
+    });
+    client_secret = paymentIntent.client_secret;
+  }
 
   return (
     <>
       <div className="grid gap-4 md:grid-cols-3 md:gap-5">
         <div className="col-span-2 space-y-4 overflow-x-auto">
           <PaymentMethodCard
-            paymentMethod={paymentMethod}
-            isPaid={isPaid}
-            paidAt={paidAt}
+            paymentMethod={order.paymentMethod}
+            isPaid={order.isPaid}
+            paidAt={order.paidAt}
           />
           <ShippingAddressCard
             shippingDetails={{
-              shippingAddress: shippingAddress as ShippingAddress,
-              isDelivered,
-              deliveredAt,
+              shippingAddress: order.shippingAddress as ShippingAddress,
+              isDelivered: order.isDelivered,
+              deliveredAt: order.deliveredAt,
             }}
           />
-          <OrderItemsTable items={orderitems} />
+          <OrderItemsTable items={order.orderitems} />
         </div>
 
         <div>
           <OrderSummaryCard
-            prices={{ itemsPrice, taxPrice, shippingPrice, totalPrice }}
+            prices={{
+              itemsPrice: order.itemsPrice,
+              taxPrice: order.taxPrice,
+              shippingPrice: order.shippingPrice,
+              totalPrice: order.totalPrice,
+            }}
           >
-            {session?.user.id === user.id && (
+            {session?.user.id === order.user.id && (
               <>
                 {/* PayPal Payment */}
-                {!isPaid && paymentMethod === 'PayPal' && (
+                {!order.isPaid && order.paymentMethod === 'PayPal' && (
                   <PayPalPayment
                     order={{
                       id: order.id,
@@ -73,19 +80,28 @@ const OrderDetailsView = async ({ id }: OrderDetailsViewProps) => {
                 )}
 
                 {/* Stripe Payment */}
+                {!order.isPaid && order.paymentMethod === 'Stripe' && (
+                  <StripePayment
+                    orderId={order.id}
+                    priceInCents={Number(order.totalPrice) * 100}
+                    clientSecret={client_secret}
+                  />
+                )}
               </>
             )}
 
             {/* Cash On Delivery */}
-            {isAdmin && !isPaid && paymentMethod === 'CashOnDelivery' && (
-              <MarkAsPaidButton
-                order={{
-                  id: order.id,
-                }}
-              />
-            )}
+            {isAdmin &&
+              !order.isPaid &&
+              order.paymentMethod === 'CashOnDelivery' && (
+                <MarkAsPaidButton
+                  order={{
+                    id: order.id,
+                  }}
+                />
+              )}
 
-            {isAdmin && isPaid && !isDelivered && (
+            {isAdmin && order.isPaid && !order.isDelivered && (
               <MarkAsDeliveredButton
                 order={{
                   id: order.id,
