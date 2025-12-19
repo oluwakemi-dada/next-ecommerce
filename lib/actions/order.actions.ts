@@ -170,7 +170,7 @@ export const createPayPalOrder = async (orderId: string) => {
 };
 
 // Update order to paid
-const updateOrderToPaid = async ({
+export const updateOrderToPaid = async ({
   orderId,
   paymentResult,
 }: {
