@@ -4,13 +4,14 @@ import { revalidatePath } from 'next/cache';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
 import { auth } from '@/auth';
 import { prisma } from '@/db/prisma';
-import { CartItem, Order, PaymentResult } from '@/types';
+import { CartItem, Order, PaymentResult, ShippingAddress } from '@/types';
 import { convertToPlainObject, formatError } from '../utils';
 import { insertOrderSchema } from '../validators';
 import { paypal } from '../paypal';
 import { PAGE_SIZE } from '../constants';
 import { getMyCart } from './cart.actions';
 import { getUserById } from './user.actions';
+import { sendPurchaseReceipt } from '@/email';
 
 // Create order and create the order items
 export const createOrder = async () => {
@@ -249,6 +250,14 @@ export const updateOrderToPaid = async ({
   });
 
   if (!updatedOrder) throw new Error('Order not found');
+
+  sendPurchaseReceipt({
+    order: {
+      ...updatedOrder,
+      shippingAddress: updatedOrder.shippingAddress as ShippingAddress,
+      paymentResult: updatedOrder.paymentResult as PaymentResult,
+    },
+  });
 };
 
 // Approve paypal order and update order to paid
@@ -448,7 +457,7 @@ export const getAllOrders = async ({
   query: string;
 }) => {
   const queryFilter: Prisma.OrderWhereInput =
-  // Query filter
+    // Query filter
     query && query !== 'all'
       ? {
           user: {

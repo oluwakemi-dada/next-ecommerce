@@ -9,7 +9,8 @@
     "lint": "eslint",
     "postinstall": "prisma generate",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "email": "cp .env ./node_modules/react-email && email dev --dir email --port 3001"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.0",
@@ -28,6 +29,7 @@
     "@radix-ui/react-select": "^2.2.6",
     "@radix-ui/react-separator": "^1.1.8",
     "@radix-ui/react-slot": "^1.2.4",
+    "@react-email/components": "^1.0.2",
     "@stripe/react-stripe-js": "^5.4.1",
     "@stripe/stripe-js": "^8.6.0",
     "@uploadthing/react": "^7.3.3",
@@ -44,9 +46,11 @@
     "react": "^19.2.1",
     "react-colorful": "^5.6.1",
     "react-dom": "^19.2.1",
+    "react-email": "^5.1.0",
     "react-hook-form": "^7.66.0",
     "react-spinners": "^0.17.0",
     "recharts": "^3.5.1",
+    "resend": "^6.6.0",
     "shadcn": "^3.4.0",
     "slugify": "^1.6.6",
     "sonner": "^2.0.7",
@@ -60,6 +64,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@react-email/preview-server": "^5.1.0",
     "@tailwindcss/postcss": "^4",
     "@types/jest": "^30.0.0",
     "@types/node": "^20.19.25",
