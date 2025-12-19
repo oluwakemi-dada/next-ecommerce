@@ -1,3 +1,4 @@
+import Stripe from 'stripe';
 import { notFound } from 'next/navigation';
 import PaymentMethodCard from '@/components/shared/order/payment-method-card';
 import OrderSummaryCard from '@/components/shared/order/order-summary-card';
@@ -5,11 +6,10 @@ import ShippingAddressCard from '@/components/shared/order/shipping-address-card
 import OrderItemsTable from '@/components/shared/order/order-items-table';
 import { getOrderById } from '@/lib/actions/order.actions';
 import { ShippingAddress } from '@/types';
-import PayPalPayment from './paypal-payment';
 import { auth } from '@/auth';
+import PayPalPayment from './paypal-payment';
 import { MarkAsPaidButton, MarkAsDeliveredButton } from './admin-order-buttons';
 import StripePayment from './stripe-payment';
-import Stripe from 'stripe';
 
 type OrderDetailsViewProps = {
   id: string;
