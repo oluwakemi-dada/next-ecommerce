@@ -47,8 +47,8 @@ A production-oriented ecommerce application built with **Next.js** and **TypeScr
 1. Clone the repository:
 
    ```bash
-   git clone <repository-url>
-   cd <project-folder>
+   git clone https://github.com/oluwakemi-dada/next-ecommerce.git
+   cd next-ecommerce
    ```
 
 2. Install dependencies:
