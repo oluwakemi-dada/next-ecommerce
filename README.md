@@ -2,6 +2,10 @@
 
 A production-oriented ecommerce application built with **Next.js** and **TypeScript**, supporting multiple payment methods, role-based access control, and a dedicated admin dashboard. The project is designed with scalability, maintainability, and real-world ecommerce workflows in mind.
 
+## Demo
+
+<a href="https://next-prostore-app.vercel.app" target="_blank" rel="noopener noreferrer">Live Demo</a>
+
 ## Features
 
 ### Customer
