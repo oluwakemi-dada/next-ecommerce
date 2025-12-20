@@ -1,6 +1,6 @@
 'use server';
 import { ZodError, z } from 'zod';
-import { hashSync } from 'bcrypt-ts-edge';
+import { Prisma } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
@@ -16,7 +16,7 @@ import {
 import { ShippingAddress } from '@/types';
 import { formatError } from '../utils';
 import { PAGE_SIZE } from '../constants';
-import { Prisma } from '@prisma/client';
+import { hash } from '../encrypt';
 
 // Sign in the user with credentials
 export const signInWithCredentials = async (
@@ -72,7 +72,7 @@ export const signUpUser = async (prevState: unknown, formData: FormData) => {
     });
 
     const plainPassword = user.password;
-    user.password = hashSync(user.password, 10);
+    user.password = await hash(user.password);
 
     await prisma.user.create({
       data: {

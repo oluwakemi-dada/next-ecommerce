@@ -1,6 +1,3 @@
-import { hashSync } from 'bcrypt-ts-edge';
-
-const sizes = ['S', 'M', 'L', 'XL', '2XL', '3XL'];
 const defaultStock = 10;
 
 const sampleData = {
@@ -8,21 +5,18 @@ const sampleData = {
     {
       name: 'John',
       email: 'admin@example.com',
-      password: hashSync('123456', 10),
+      password: '123456',
       role: 'admin',
     },
     {
       name: 'Jane',
       email: 'user@example.com',
-      password: hashSync('123456', 10),
+      password: '123456',
       role: 'user',
     },
   ],
 
   products: [
-    // ==========================================
-    // 1) Polo Sporting Stretch Shirt (size + color)
-    // ==========================================
     {
       name: 'Polo Sporting Stretch Shirt',
       slug: 'polo-sporting-stretch-shirt',
@@ -57,10 +51,6 @@ const sampleData = {
         })),
       ],
     },
-
-    // ==========================================
-    // 2) Brooks Brothers Long Sleeved Shirt (size + color)
-    // ==========================================
     {
       name: 'Brooks Brothers Long Sleeved Shirt',
       slug: 'brooks-brothers-long-sleeved-shirt',
@@ -79,10 +69,6 @@ const sampleData = {
       banner: 'banner-2.jpg',
       variants: [],
     },
-
-    // ==========================================
-    // 3) Tommy Hilfiger Classic Fit Dress Shirt (size only)
-    // ==========================================
     {
       name: 'Tommy Hilfiger Classic Fit Dress Shirt',
       slug: 'tommy-hilfiger-classic-fit-dress-shirt',
@@ -109,10 +95,6 @@ const sampleData = {
         })),
       ],
     },
-
-    // ==========================================
-    // 4) Calvin Klein Slim Fit Stretch Shirt (size only)
-    // ==========================================
     {
       name: 'Calvin Klein Slim Fit Stretch Shirt',
       slug: 'calvin-klein-slim-fit-stretch-shirt',
@@ -131,10 +113,6 @@ const sampleData = {
       banner: null,
       variants: [],
     },
-
-    // ==========================================
-    // 5) Polo Ralph Lauren Oxford Shirt (color only)
-    // ==========================================
     {
       name: 'Polo Ralph Lauren Oxford Shirt',
       slug: 'polo-ralph-lauren-oxford-shirt',
@@ -166,13 +144,9 @@ const sampleData = {
           sku: 'PRL-PNK-M',
           price: 84.99,
           image: '/images/sample-products/p5-2.jpg',
-        }, // Pink premium
+        },
       ],
     },
-
-    // ==========================================
-    // 6) Polo Classic Pink Hoodie (size only)
-    // ==========================================
     {
       name: 'Polo Classic Pink Hoodie',
       slug: 'polo-classic-pink-hoodie',

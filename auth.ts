@@ -1,9 +1,9 @@
-import { compareSync } from 'bcrypt-ts-edge';
 import NextAuth, { NextAuthConfig } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import { cookies } from 'next/headers';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { prisma } from '@/db/prisma';
+import { compare } from './lib/encrypt';
 import { authConfig } from './auth.config';
 import { CartItem } from './types';
 
@@ -35,7 +35,7 @@ export const config = {
 
         // Check if the user exists and if the password matches
         if (user && user.password) {
-          const isMatch = compareSync(
+          const isMatch = await compare(
             credentials.password as string,
             user.password,
           );
