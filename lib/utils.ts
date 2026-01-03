@@ -111,7 +111,7 @@ export const serializeProduct = (product: any) => {
 
 // Helper to get sizes for a category
 export const getSizesForCategory = (categoryValue: string): string[] => {
-  const category = CATEGORY_OPTIONS.find((cat) => cat.value === categoryValue);
+  const category = CATEGORY_OPTIONS.find((cat) => cat.label === categoryValue);
   return category?.sizes ? [...category.sizes] : [];
 };
 
