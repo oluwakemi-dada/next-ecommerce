@@ -117,6 +117,7 @@ export const PRODUCT_CATEGORIES = {
   BAGS: {
     value: 'bags',
     label: 'Bags',
+    sizes: []
   },
 } as const;
 
