@@ -68,7 +68,7 @@ export const reviewFormDefaultValues = {
   rating: 0,
 };
 
-export const SENDER_EMAIL = process.env.SENDER_EMAIL || 'onboarding@resend.dev'
+export const SENDER_EMAIL = process.env.SENDER_EMAIL || 'onboarding@resend.dev';
 
 export const USER_ROLES = process.env.USER_ROLES
   ? process.env.USER_ROLES.split(', ')
@@ -140,10 +140,9 @@ export const PRODUCT_CATEGORIES = {
       '38D',
     ],
   },
-  ACCESSORIES: {
-    value: 'accessories',
-    label: 'Accessories',
-    sizes: ['One Size'],
+  BAGS: {
+    value: 'bags',
+    label: 'Bags',
   },
   KIDS_CLOTHING: {
     value: 'kids-clothing',

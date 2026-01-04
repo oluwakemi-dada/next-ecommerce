@@ -15,7 +15,7 @@ const ProductImages = ({ images }: ProductImagesProps) => {
         alt="product image"
         width={1000}
         height={1000}
-        className="min-h-[300px] object-cover object-center"
+        className="min-h-[300px] rounded-sm object-cover object-center mb-3"
       />
       <div className="flex gap-2">
         {images.map((image, index) => (
