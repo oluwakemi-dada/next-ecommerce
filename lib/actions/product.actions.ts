@@ -158,6 +158,7 @@ export const deleteProduct = async (id: string) => {
     await prisma.product.delete({ where: { id } });
 
     revalidatePath('/admin/products');
+    revalidatePath(`/product/${productExists.slug}`);
 
     return {
       success: true,
@@ -212,6 +213,7 @@ export const createProduct = async (
     }
 
     revalidatePath('/admin/products');
+    revalidatePath('/');
 
     return {
       success: true,
@@ -281,6 +283,7 @@ export const updateProduct = async (
     });
 
     revalidatePath('/admin/products');
+    revalidatePath(`/product/${product.slug}`);
 
     return {
       success: true,
