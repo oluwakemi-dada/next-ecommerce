@@ -74,6 +74,7 @@ export const createUpdateReview = async (
     });
 
     revalidatePath(`/product/${product.slug}`);
+    revalidatePath('/');
 
     return {
       success: true,
