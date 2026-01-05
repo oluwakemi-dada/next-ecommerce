@@ -6,6 +6,9 @@ A production-oriented ecommerce application built with **Next.js** and **TypeScr
 
 <a href="https://next-prostore-app.vercel.app" target="_blank" rel="noopener noreferrer">Live Demo</a>
 
+
+![Screenshot of The Wild Oasis](./public/images/screenshot.png)
+
 ## Features
 
 ### Customer
