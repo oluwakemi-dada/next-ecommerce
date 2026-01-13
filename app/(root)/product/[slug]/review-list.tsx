@@ -75,7 +75,7 @@ const ReviewList = ({ productId, productSlug }: ReviewListProps) => {
               <CardDescription>{review.description}</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-muted-foreground flex space-x-4 text-sm">
+              <div className="text-muted-foreground flex flex-wrap space-x-4 text-sm gap-y-2">
                 <Rating value={review.rating} />
                 <div className="flex items-center">
                   <User className="mr-1 h-3 w-3" />

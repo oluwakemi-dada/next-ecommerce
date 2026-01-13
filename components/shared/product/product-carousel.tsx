@@ -37,7 +37,7 @@ const ProductCarousel = ({ data }: ProductCarouselProps) => {
               <div className="relative mx-auto">
                 <Image
                   src={product.banner!}
-                  alt={product.name}
+                  alt={`${product.name} banner`}
                   height="0"
                   width="0"
                   sizes="100vw"

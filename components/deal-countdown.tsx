@@ -1,11 +1,11 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, memo, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from './ui/button';
 
 // Static target date
-const TARGET_DATE = new Date('2026-02-14T00:00:00');
+const TARGET_DATE = new Date('2026-03-14T00:00:00');
 
 // Calculate the time remaining
 const calculateTimeRemaining = (targetDate: Date) => {
@@ -24,12 +24,13 @@ const calculateTimeRemaining = (targetDate: Date) => {
 
 const DealCountdown = () => {
   const [time, setTime] = useState<ReturnType<typeof calculateTimeRemaining>>();
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     // Calculate initial time
     setTime(calculateTimeRemaining(TARGET_DATE));
 
-    const timerInterval = setInterval(() => {
+    intervalRef.current = setInterval(() => {
       const newTime = calculateTimeRemaining(TARGET_DATE);
       setTime(newTime);
 
@@ -39,11 +40,14 @@ const DealCountdown = () => {
         newTime.minutes === 0 &&
         newTime.seconds === 0
       ) {
-        clearInterval(timerInterval);
+        if (intervalRef.current) clearInterval(intervalRef.current);
       }
-
-      return () => clearInterval(timerInterval);
     }, 1000);
+
+    // Cleanup
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
   }, []);
 
   if (!time) {
@@ -70,7 +74,7 @@ const DealCountdown = () => {
             This deal is no longer available. Check out our latest promotions!
           </p>
 
-          <div className="text-center mt-2">
+          <div className="mt-2 text-center">
             <Button asChild>
               <Link href="/search">View Products</Link>
             </Button>
@@ -122,11 +126,13 @@ const DealCountdown = () => {
   );
 };
 
-const StatBox = ({ label, value }: { label: string; value: number }) => (
+const StatBox = memo(({ label, value }: { label: string; value: number }) => (
   <li className="w-full p-4 text-center">
     <p className="text-3xl font-bold">{value}</p>
     <p>{label}</p>
   </li>
-);
+));
+
+StatBox.displayName = 'StatBox';
 
 export default DealCountdown;

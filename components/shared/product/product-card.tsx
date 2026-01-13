@@ -16,7 +16,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
       : !!product.stock && product.stock > 0;
 
   return (
-    <Card className="w-full max-w-sm p-3">
+    <Card className="w-full sm:max-w-sm p-3">
       <CardHeader className="items-center p-0">
         <Link href={`/product/${product.slug}`}>
           <Image
@@ -25,7 +25,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
             height={300}
             width={300}
             priority={true}
-            className='rounded-sm'
+            className='rounded-sm w-full'
           />
         </Link>
       </CardHeader>

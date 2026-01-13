@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 
 const SignUpPage = async () => {
   return (
-    <div className="mx-auto w-full max-w-md">
+    <div className="mx-auto w-full max-w-[90%] sm:max-w-md">
       <Card>
         <CardHeader className="space-y-4">
           <Link href="/" className="flex-center">
