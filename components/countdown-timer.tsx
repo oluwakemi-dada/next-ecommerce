@@ -1,8 +1,5 @@
 'use client';
 import { memo, useEffect, useRef, useState } from 'react';
-import { Button } from './ui/button';
-import Link from 'next/link';
-import Image from 'next/image';
 
 // Calculate the time remaining
 const calculateTimeRemaining = (targetDate: Date) => {
@@ -63,31 +60,7 @@ const CountdownTimer = ({ targetDate }: { targetDate: Date }) => {
     time.minutes === 0 &&
     time.seconds === 0
   ) {
-    return (
-      <section className="my-20 grid grid-cols-1 md:grid-cols-2">
-        <div className="flex flex-col justify-center gap-2">
-          <h3 className="text-3xl font-bold">Deal Has Ended</h3>
-          <p>
-            This deal is no longer available. Check out our latest promotions!
-          </p>
-
-          <div className="mt-2 text-center">
-            <Button asChild>
-              <Link href="/search">View Products</Link>
-            </Button>
-          </div>
-        </div>
-        <div className="flex justify-center">
-          {/* // eslint-disable-next-line react/jsx-no-undef */}
-          <Image
-            src="/images/promo.jpg"
-            alt="promotion"
-            width={300}
-            height={200}
-          />
-        </div>
-      </section>
-    );
+    return null;
   }
 
   return (
