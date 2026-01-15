@@ -45,7 +45,7 @@ const ProductCarousel = ({ data }: ProductCarouselProps) => {
                   priority={index === 0}
                 />
                 <div className="absolute inset-0 flex items-end justify-center">
-                  <h2 className="bg-opacity-50 bg-gray-900 px-2 text-2xl font-bold text-white">
+                  <h2 className="bg-opacity-50 bg-gray-900 px-2 text-[16px] font-bold text-white sm:text-2xl">
                     {product.name}
                   </h2>
                 </div>
