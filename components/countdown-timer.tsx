@@ -45,7 +45,7 @@ const CountdownTimer = ({ targetDate }: { targetDate: Date }) => {
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, []);
+  }, [targetDate]);
 
   if (!time) {
     return (
