@@ -6,8 +6,11 @@ A production-oriented ecommerce application built with **Next.js** and **TypeScr
 
 <a href="https://next-prostore-app.vercel.app" target="_blank" rel="noopener noreferrer">Live Demo</a>
 
-
 ![Screenshot of Prostore](./public/images/screenshot.png)
+
+## Admin Credentials
+- email: admin@example.com
+- password: 123456
 
 ## Features
 
